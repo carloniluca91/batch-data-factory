@@ -75,12 +75,6 @@
 
             <dependency>
                 <groupId>it.luca</groupId>
-                <artifactId>data-factory</artifactId>
-                <version>${data.factory.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>it.luca</groupId>
                 <artifactId>java-utils</artifactId>
                 <version>${java.utils.version}</version>
             </dependency>

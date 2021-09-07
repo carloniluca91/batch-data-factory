@@ -1,0 +1,17 @@
+spring:
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    username: @jdbc.user@
+    password: @jdbc.password@
+    url: @jdbc.url@
+
+application:
+  dataSources:
+    -
+      id: OCS_DAILY
+      type: csv
+      dataClass: OcsDailyRecord
+      size: 1000000
+      targetType: HDFS
+      targetPath: /user/osboxes/applications/aurora_dataload/landing/ocs_daily
+      fileName: ocs_daily_yyyyMMdd.csv.gz
