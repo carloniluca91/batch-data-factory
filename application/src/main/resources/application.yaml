@@ -4,6 +4,11 @@ spring:
     username: @jdbc.user@
     password: @jdbc.password@
     url: @jdbc.url@
+  hadoop:
+    hdfs:
+      uri: hdfs://quickstart-bigdata:8020
+      user: osboxes
+      defaultPermissions: -rwxr-xr-x
 
 application:
   dataSources:
@@ -12,6 +17,6 @@ application:
       type: csv
       dataClass: OcsDailyRecord
       size: 1000000
-      targetType: HDFS
+      fileSystemType: HDFS
       targetPath: /user/osboxes/applications/aurora_dataload/landing/ocs_daily
       fileName: ocs_daily_yyyyMMdd.csv.gz

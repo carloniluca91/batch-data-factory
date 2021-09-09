@@ -33,7 +33,10 @@
         <maven.compiler.target>${java.version}</maven.compiler.target>
 
         <jdbi.version>3.20.1</jdbi.version>
+        <hadoop.client.version>3.0.0-cdh6.3.2</hadoop.client.version>
+        <jackson.csv.version>2.11.4</jackson.csv.version>
         <java.utils.version>0.3.2</java.utils.version>
+        <data.factory.version>0.3.0</data.factory.version>
     </properties>
 
     <build>
@@ -63,6 +66,13 @@
         </resources>
     </build>
 
+    <repositories>
+        <repository>
+            <id>Cloudera</id>
+            <url>https://repository.cloudera.com/artifactory/cloudera-repos/</url>
+        </repository>
+    </repositories>
+
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -73,10 +83,52 @@
                 <scope>import</scope>
             </dependency>
 
+            <!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.dataformat/jackson-dataformat-csv -->
+            <dependency>
+                <groupId>com.fasterxml.jackson.dataformat</groupId>
+                <artifactId>jackson-dataformat-csv</artifactId>
+                <version>${jackson.csv.version}</version>
+            </dependency>
+
+            <!-- https://mvnrepository.com/artifact/org.apache.hadoop/hadoop-hdfs-client -->
+            <dependency>
+                <groupId>org.apache.hadoop</groupId>
+                <artifactId>hadoop-client</artifactId>
+                <version>${hadoop.client.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.apache.hadoop</groupId>
+                        <artifactId>hadoop-yarn-api</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.apache.hadoop</groupId>
+                        <artifactId>hadoop-yarn-client</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.apache.hadoop</groupId>
+                        <artifactId>hadoop-mapreduce-client-core</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.apache.hadoop</groupId>
+                        <artifactId>hadoop-mapreduce-client-jobclient</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.apache.hadoop</groupId>
+                        <artifactId>hadoop-annotations</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+
             <dependency>
                 <groupId>it.luca</groupId>
                 <artifactId>java-utils</artifactId>
                 <version>${java.utils.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>it.luca</groupId>
+                <artifactId>data-factory</artifactId>
+                <version>${data.factory.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

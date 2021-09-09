@@ -1,15 +1,16 @@
-package it.luca.batch.factory.app.configuration;
+package it.luca.batch.factory.model;
 
 import lombok.Data;
 
 @Data
+@SuppressWarnings("unused")
 public class BatchDataSource<T> {
 
     private String id;
-    private BatchDataSourceType type;
+    private DataSourceType type;
     private Class<T> dataClass;
     private Integer size;
-    private TargetType targetType;
+    private FileSystemType fileSystemType;
     private String targetPath;
     private String fileName;
 
@@ -21,10 +22,10 @@ public class BatchDataSource<T> {
 
     public void setType(String type) {
 
-        this.type = BatchDataSourceType.valueOf(type.toUpperCase());
+        this.type = DataSourceType.valueOf(type.toUpperCase());
     }
 
-    public void setTargetType(String type) {
-        this.targetType = TargetType.valueOf(type.toUpperCase());
+    public void setFileSystemType(String type) {
+        this.fileSystemType = FileSystemType.valueOf(type.toUpperCase());
     }
 }

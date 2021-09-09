@@ -1,6 +1,6 @@
 package it.luca.batch.factory.app.jdbc.dto;
 
-import it.luca.batch.factory.app.configuration.BatchDataSource;
+import it.luca.batch.factory.model.BatchDataSource;
 import lombok.Getter;
 
 import java.sql.Date;
@@ -12,6 +12,9 @@ import static it.luca.utils.time.Supplier.now;
 
 @Getter
 public class BatchGenerationLogRecord {
+
+    public static final String OK = "OK";
+    public static final String KO = "KO";
 
     private final Timestamp eventTs = Timestamp.valueOf(now());
     private final Date eventDt = Date.valueOf(now().toLocalDate());
@@ -27,15 +30,15 @@ public class BatchGenerationLogRecord {
     private final Timestamp insertTs = Timestamp.valueOf(now());
     private final Date insertDt = Date.valueOf(now().toLocalDate());
 
-    public BatchGenerationLogRecord(BatchDataSource<?> dataSource, String generatedFileName, Exception exception) {
+    public BatchGenerationLogRecord(BatchDataSource<?> dataSource, Exception exception) {
 
         this.dataSourceId = dataSource.getId();
         this.dataSourceType = dataSource.getType().name();
         this.batchSize = dataSource.getSize();
-        this.targetType = dataSource.getTargetType().name();
+        this.targetType = dataSource.getFileSystemType().name();
         this.targetPath = dataSource.getTargetPath();
-        this.fileName = generatedFileName;
-        this.generationCode = isPresent(exception) ? "KO" : "OK";
+        this.fileName = dataSource.getFileName();
+        this.generationCode = isPresent(exception) ? KO : OK;
         this.exceptionClass = orNull(exception, x -> x.getClass().getName());
         this.exceptionMessage = orNull(exception, Exception::getMessage);
     }

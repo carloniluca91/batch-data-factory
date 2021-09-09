@@ -1,5 +1,6 @@
 package it.luca.batch.factory.app.configuration;
 
+import it.luca.batch.factory.model.BatchDataSource;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
