@@ -1,11 +1,8 @@
-package it.luca.batch.factory.app.service;
+package it.luca.batch.factory.app.service.write;
 
 import it.luca.batch.factory.app.service.dto.FailedFsOperation;
 import it.luca.batch.factory.app.service.dto.FsOperation;
 import it.luca.batch.factory.app.service.dto.SucceededFsOperation;
-import it.luca.batch.factory.app.service.write.AvroDataWriter;
-import it.luca.batch.factory.app.service.write.CsvDataWriter;
-import it.luca.batch.factory.app.service.write.DataWriter;
 import it.luca.batch.factory.model.BatchDataSource;
 import it.luca.batch.factory.model.DataSourceType;
 import it.luca.batch.factory.model.FileSystemType;

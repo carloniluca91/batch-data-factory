@@ -2,6 +2,7 @@ package it.luca.batch.factory.app.service;
 
 import it.luca.batch.factory.app.jdbc.dao.ApplicationDao;
 import it.luca.batch.factory.app.jdbc.dto.BatchGenerationLogRecord;
+import it.luca.batch.factory.app.service.write.FileSystemWriter;
 import it.luca.batch.factory.model.BatchDataSource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

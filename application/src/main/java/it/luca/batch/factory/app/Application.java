@@ -26,9 +26,9 @@ public class Application implements ApplicationRunner {
     }
 
     @Override
-    public void run(ApplicationArguments args) throws InterruptedException {
+    public void run(ApplicationArguments args) {
 
-        log.info("Found {} dataSource(s) to be generated ({})", dataSourceIds.size(), String.join(", ", dataSourceIds));
+        log.info("Found {} dataSource(s) to be generated ({})", dataSourceIds.size(), String.join("|", dataSourceIds));
         controller.run(dataSourceIds);
     }
 }
