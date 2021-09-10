@@ -1,6 +1,8 @@
 package it.luca.batch.factory.app;
 
-import it.luca.batch.factory.app.controller.ApplicationController;
+import it.luca.batch.factory.app.configuration.ApplicationYaml;
+import it.luca.batch.factory.app.service.ApplicationService;
+import it.luca.batch.factory.model.BatchDataSource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -19,7 +21,10 @@ public class Application implements ApplicationRunner {
     private List<String> dataSourceIds;
 
     @Autowired
-    private ApplicationController controller;
+    private ApplicationYaml yaml;
+
+    @Autowired
+    private ApplicationService service;
 
     public static void main(String[] args) {
         SpringApplication.run(Application.class, args);
@@ -29,6 +34,12 @@ public class Application implements ApplicationRunner {
     public void run(ApplicationArguments args) {
 
         log.info("Found {} dataSource(s) to be generated ({})", dataSourceIds.size(), String.join("|", dataSourceIds));
-        controller.run(dataSourceIds);
+        dataSourceIds.forEach(id -> {
+
+            log.info("Starting to generate data for dataSource {}", id);
+            BatchDataSource<?> dataSource = yaml.getDataSourceWithId(id);
+            service.generateBatch(dataSource);
+            log.info("Successfully generated data for dataSource {}", id);
+        });
     }
 }

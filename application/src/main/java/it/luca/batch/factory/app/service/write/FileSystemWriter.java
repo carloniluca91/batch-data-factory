@@ -36,6 +36,15 @@ public class FileSystemWriter {
     @Value("${spring.hadoop.hdfs.defaultPermissions}")
     private String HDFS_DEFAULT_PERMISSIONS;
 
+    /**
+     * Write batch of random data
+     * @param dataClass class of T
+     * @param batch {@link List} of instances of T
+     * @param dataSourceOutput {@link DataSourceOutput} containing settings for write operation
+     * @param <T> type of random data
+     * @throws Exception if write operation fails
+     */
+
     public <T> void writeData(Class<T> dataClass, List<T> batch, DataSourceOutput dataSourceOutput) throws Exception {
 
         FileSystemType fileSystemType = dataSourceOutput.getFileSystemType();
@@ -49,7 +58,7 @@ public class FileSystemWriter {
                 break;
             } case HDFS: {
 
-                // Initialize a distributed FS instance
+                // Set up Hadoop client configuration and initialize a distributed FS instance
                 System.setProperty("HADOOP_USER_NAME", HDFS_USER);
                 Configuration configuration = new Configuration();
                 configuration.set(FileSystem.FS_DEFAULT_NAME_KEY, HDFS_URI);
@@ -67,7 +76,7 @@ public class FileSystemWriter {
                     }
                 });
 
-                // Thrown caught exception, if any
+                // Thrown previously caught exception, if any (work around in order to run FS operation)
                 if (fsOperation.isFailure()) {
                     throw fsOperation.asFailure().getException();
                 }
@@ -75,6 +84,16 @@ public class FileSystemWriter {
             } default: throw new NoSuchElementException(String.format("Unmatched %s: %s", FileSystemType.class.getSimpleName(), fileSystemType));
         }
     }
+
+    /**
+     * Write batch of random data on file system
+     * @param dataClass class of T
+     * @param batch {@link List} of instances of T
+     * @param output {@link DataSourceOutput} containing settings for write operation
+     * @param fs {@link FileSystem} where data will be saved
+     * @param <T> type of random data
+     * @throws IOException if write operation fails
+     */
 
     private <T> void writeToFileSystem(Class<T> dataClass, List<T> batch, DataSourceOutput output, FileSystem fs) throws IOException {
 
@@ -91,19 +110,24 @@ public class FileSystemWriter {
                     targetDirectory, HDFS_DEFAULT_PERMISSIONS, fsTypeDescription);
         }
 
-        String targetFileName = output.getFileName();
+        String targetFileName = output.getFileNameWithDate();
         Path targetFilePath = new Path(String.join("/", targetPathStr, targetFileName));
         FSDataOutputStream fsDataOutputStream = fs.create(targetFilePath, false);
-        OutputType dataSourceType = output.getOutputType();
+        OutputType outputType = output.getOutputType();
         DataWriter<T> dataWriter;
-        switch (dataSourceType) {
+        switch (outputType) {
             case AVRO: dataWriter = new AvroDataWriter<>();break;
             case CSV: dataWriter = new CsvDataWriter<>(targetFileName.toLowerCase().endsWith(".csv.gz")); break;
-            default: throw new NoSuchElementException(String.format("Unmatched %s: %s", OutputType.class.getSimpleName(), dataSourceType));
+            default: throw new NoSuchElementException(String.format("Unmatched %s: %s", OutputType.class.getSimpleName(), outputType));
         }
 
+        String dataClassName = dataClass.getSimpleName();
+        String outputDataFormat = outputType.name().toLowerCase();
+        String fsDescription = output.getFileSystemType().getDescription();
+        log.info("Starting to write all of {} instance(s) of {} as .{} file on {} at path {}",
+                batch.size(), dataClassName, outputDataFormat, fsDescription, targetFilePath);
         dataWriter.write(dataClass, batch, fsDataOutputStream);
-        log.info("Successfully written all of {} instance(s) of {} as {}",
-                batch.size(), dataClass.getSimpleName(), output.getOutputType().name().toLowerCase());
+        log.info("Successfully written all of {} instance(s) of {} as .{} file on {} at path {}",
+                batch.size(), dataClassName, outputDataFormat, fsDescription, targetFilePath);
     }
 }

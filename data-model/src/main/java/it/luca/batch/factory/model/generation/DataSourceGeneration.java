@@ -13,18 +13,27 @@ import java.util.List;
         use = JsonTypeInfo.Id.NAME,
         property = "type")
 @JsonSubTypes({
-        @JsonSubTypes.Type(value = CustomGeneration.class, name = "CUSTOM"),
-        @JsonSubTypes.Type(value = StandardGeneration.class, name = "STANDARD")
+        @JsonSubTypes.Type(value = CustomGeneration.class, name = DataSourceGeneration.CUSTOM),
+        @JsonSubTypes.Type(value = StandardGeneration.class, name = DataSourceGeneration.STANDARD)
 })
 public abstract class DataSourceGeneration<T> {
+
+    public static final String CUSTOM = "CUSTOM";
+    public static final String STANDARD = "STANDARD";
 
     protected Integer size;
     protected Class<T> dataClass;
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked", "unused"})
     public void setDataClass(String dataClass) throws ClassNotFoundException {
         this.dataClass = (Class<T>) Class.forName(dataClass);
     }
+
+    /**
+     * Generate a batch of random data of type T
+     * @return {@link List} of random instances of T
+     * @throws Exception if data creation fails
+     */
 
     public List<T> getBatch() throws Exception {
 
@@ -35,5 +44,5 @@ public abstract class DataSourceGeneration<T> {
         return batch;
     }
 
-    public abstract List<T> createBatch() throws Exception;
+    protected abstract List<T> createBatch() throws Exception;
 }

@@ -19,15 +19,7 @@ public abstract class FsOperation {
         return (FailedFsOperation) this;
     }
 
-    public SucceededFsOperation asSuccess() {
-        return (SucceededFsOperation) this;
-    }
-
     public boolean isFailure() {
         return this instanceof FailedFsOperation;
-    }
-
-    public boolean isSuccess() {
-        return this instanceof SucceededFsOperation;
     }
 }

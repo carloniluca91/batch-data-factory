@@ -13,8 +13,13 @@ public class CustomGeneration<T> extends DataSourceGeneration<T> {
 
     private Class<CustomGenerator<T>> generatorClass;
 
+    @SuppressWarnings({"unchecked", "unused"})
+    public void setGeneratorClass(String generatorClass) throws ClassNotFoundException {
+        this.generatorClass = (Class<CustomGenerator<T>>) Class.forName(generatorClass);
+    }
+
     @Override
-    public List<T> createBatch() throws Exception {
+    protected List<T> createBatch() throws Exception {
 
         List<T> batch = new ArrayList<>();
         CustomGenerator<T> generator = generatorClass.newInstance();

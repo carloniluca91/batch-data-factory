@@ -8,7 +8,7 @@ import java.util.List;
 public class StandardGeneration<T> extends DataSourceGeneration<T> {
 
     @Override
-    public List<T> createBatch() throws Exception {
+    protected List<T> createBatch() throws Exception {
 
         List<T> batch = new ArrayList<>();
         for (int i=0; i < size; i++) {

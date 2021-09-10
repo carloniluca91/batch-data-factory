@@ -10,13 +10,18 @@ import java.io.OutputStream;
 import java.util.List;
 import java.util.zip.ZipOutputStream;
 
+/**
+ * Extension of {@link DataWriter} for writing data in .csv format
+ * @param <T> type of data to be written
+ */
+
 @AllArgsConstructor
 public class CsvDataWriter<T> implements DataWriter<T> {
 
     private final boolean isZip;
 
     @Override
-    public void write(Class<T> dataClass, List<T> objectList, OutputStream outputStream) throws IOException {
+    public void write(Class<T> dataClass, List<T> batch, OutputStream outputStream) throws IOException {
 
         CsvMapper csvMapper = new CsvMapper();
         CsvSchema csvSchema = csvMapper.schemaFor(dataClass)
@@ -28,7 +33,7 @@ public class CsvDataWriter<T> implements DataWriter<T> {
                 outputStream;
 
         ObjectWriter writer = csvMapper.writer(csvSchema);
-        writer.writeValue(stream, objectList);
+        writer.writeValue(stream, batch);
         outputStream.close();
     }
 }

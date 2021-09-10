@@ -9,15 +9,20 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
 
+/**
+ * Extension of {@link DataWriter} for writing data in Avro format
+ * @param <T> type of data to be written
+ */
+
 public class AvroDataWriter<T> implements DataWriter<T> {
 
     @Override
-    public void write(Class<T> dataClass, List<T> objectList, OutputStream outputStream) throws IOException {
+    public void write(Class<T> dataClass, List<T> batch, OutputStream outputStream) throws IOException {
 
         DataFileWriter<T> dataFileWriter = new DataFileWriter<>(new ReflectDatumWriter<>(dataClass));
         Schema avroSchema = ReflectData.get().getSchema(dataClass);
         dataFileWriter.create(avroSchema, outputStream);
-        for (T instance : objectList) {
+        for (T instance : batch) {
             dataFileWriter.append(instance);
         }
 
