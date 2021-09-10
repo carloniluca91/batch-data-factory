@@ -3,27 +3,29 @@ package it.luca.batch.factory.app.service.write;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
-import it.luca.batch.factory.model.BatchDataSource;
-import org.apache.hadoop.fs.FSDataOutputStream;
+import lombok.AllArgsConstructor;
 
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
 import java.util.zip.ZipOutputStream;
 
+@AllArgsConstructor
 public class CsvDataWriter<T> implements DataWriter<T> {
 
+    private final boolean isZip;
+
     @Override
-    public void write(BatchDataSource<T> dataSource, List<T> objectList, FSDataOutputStream outputStream) throws IOException {
+    public void write(Class<T> dataClass, List<T> objectList, OutputStream outputStream) throws IOException {
 
         CsvMapper csvMapper = new CsvMapper();
-        CsvSchema csvSchema = csvMapper.schemaFor(dataSource.getDataClass())
+        CsvSchema csvSchema = csvMapper.schemaFor(dataClass)
                 .withColumnSeparator(';')
                 .withUseHeader(true);
 
-        OutputStream stream = dataSource.getFileName().toLowerCase().endsWith(".gz") ?
+        OutputStream stream = isZip ?
                 new ZipOutputStream(outputStream) :
-                outputStream.getWrappedStream();
+                outputStream;
 
         ObjectWriter writer = csvMapper.writer(csvSchema);
         writer.writeValue(stream, objectList);

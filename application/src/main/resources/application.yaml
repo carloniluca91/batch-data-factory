@@ -14,9 +14,14 @@ application:
   dataSources:
     -
       id: OCS_DAILY
-      type: csv
-      dataClass: OcsDailyRecord
-      size: 1000000
-      fileSystemType: HDFS
-      targetPath: /user/osboxes/applications/aurora_dataload/landing/ocs_daily
-      fileName: ocs_daily_yyyyMMdd.csv.gz
+      configuration:
+        generation:
+          type: STANDARD
+          size: 1000000
+          dataClass: OcsDailyRecord
+        output:
+          type: csv
+          fileSystemType: HDFS
+          path: /user/osboxes/applications/aurora_dataload/landing/ocs_daily
+          fileName: ocs_daily_yyyyMMdd.csv.gz
+          datePattern: yyyyMMdd

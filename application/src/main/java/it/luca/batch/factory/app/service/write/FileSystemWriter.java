@@ -3,9 +3,9 @@ package it.luca.batch.factory.app.service.write;
 import it.luca.batch.factory.app.service.dto.FailedFsOperation;
 import it.luca.batch.factory.app.service.dto.FsOperation;
 import it.luca.batch.factory.app.service.dto.SucceededFsOperation;
-import it.luca.batch.factory.model.BatchDataSource;
-import it.luca.batch.factory.model.DataSourceType;
-import it.luca.batch.factory.model.FileSystemType;
+import it.luca.batch.factory.model.output.DataSourceOutput;
+import it.luca.batch.factory.model.output.DataSourceOutput.FileSystemType;
+import it.luca.batch.factory.model.output.DataSourceOutput.OutputType;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FSDataOutputStream;
@@ -36,16 +36,16 @@ public class FileSystemWriter {
     @Value("${spring.hadoop.hdfs.defaultPermissions}")
     private String HDFS_DEFAULT_PERMISSIONS;
 
-    public <T> void writeData(BatchDataSource<T> dataSource, List<T> objectList) throws Exception {
+    public <T> void writeData(Class<T> dataClass, List<T> batch, DataSourceOutput dataSourceOutput) throws Exception {
 
-        FileSystemType fileSystemType = dataSource.getFileSystemType();
+        FileSystemType fileSystemType = dataSourceOutput.getFileSystemType();
         switch (fileSystemType) {
             case LOCAL: {
 
                 // Initialize a local FS instance
                 FileSystem fs = new RawLocalFileSystem();
                 log.info("Successfully initialized instance of {}", RawLocalFileSystem.class.getSimpleName());
-                writeToFileSystem(dataSource, objectList, fs);
+                writeToFileSystem(dataClass, batch, dataSourceOutput, fs);
                 break;
             } case HDFS: {
 
@@ -60,7 +60,7 @@ public class FileSystemWriter {
                 // Write data
                 FsOperation fsOperation = ugi.doAs((PrivilegedAction<FsOperation>) () -> {
                     try {
-                        writeToFileSystem(dataSource, objectList, fs);
+                        writeToFileSystem(dataClass, batch, dataSourceOutput, fs);
                         return new SucceededFsOperation();
                     } catch (IOException e) {
                         return new FailedFsOperation(e);
@@ -76,13 +76,11 @@ public class FileSystemWriter {
         }
     }
 
-    private <T> void writeToFileSystem(BatchDataSource<T> dataSource, List<T> objectList, FileSystem fs) throws IOException {
+    private <T> void writeToFileSystem(Class<T> dataClass, List<T> batch, DataSourceOutput output, FileSystem fs) throws IOException {
 
-        Class<T> dataClass = dataSource.getDataClass();
-        String dataClassName = dataClass.getSimpleName();
-        String targetPathStr = dataSource.getTargetPath();
+        String targetPathStr = output.getPath();
         Path targetDirectory = new Path(targetPathStr);
-        String fsTypeDescription = dataSource.getFileSystemType().getDescription();
+        String fsTypeDescription = output.getFileSystemType().getDescription();
 
         // Create target directory if necessary
         if (!fs.exists(targetDirectory)) {
@@ -93,19 +91,19 @@ public class FileSystemWriter {
                     targetDirectory, HDFS_DEFAULT_PERMISSIONS, fsTypeDescription);
         }
 
-        String targetFileName = dataSource.getFileName();
+        String targetFileName = output.getFileName();
         Path targetFilePath = new Path(String.join("/", targetPathStr, targetFileName));
         FSDataOutputStream fsDataOutputStream = fs.create(targetFilePath, false);
-        DataSourceType dataSourceType = dataSource.getType();
+        OutputType dataSourceType = output.getOutputType();
         DataWriter<T> dataWriter;
         switch (dataSourceType) {
             case AVRO: dataWriter = new AvroDataWriter<>();break;
-            case CSV: dataWriter = new CsvDataWriter<>(); break;
-            default: throw new NoSuchElementException(String.format("Unmatched %s: %s", DataSourceType.class.getSimpleName(), dataSourceType));
+            case CSV: dataWriter = new CsvDataWriter<>(targetFileName.toLowerCase().endsWith(".csv.gz")); break;
+            default: throw new NoSuchElementException(String.format("Unmatched %s: %s", OutputType.class.getSimpleName(), dataSourceType));
         }
 
-        dataWriter.write(dataSource, objectList, fsDataOutputStream);
+        dataWriter.write(dataClass, batch, fsDataOutputStream);
         log.info("Successfully written all of {} instance(s) of {} as {}",
-                objectList.size(), dataClassName, dataSource.getType().name().toLowerCase());
+                batch.size(), dataClass.getSimpleName(), output.getOutputType().name().toLowerCase());
     }
 }

@@ -26,6 +26,26 @@
         <module>data-model</module>
     </modules>
 
+
+    <profiles>
+        <profile>
+            <id>dev</id>
+            <properties>
+                <spring.profiles.active>dev</spring.profiles.active>
+                <jdbc.user>data_factory_dev</jdbc.user>
+                <jdbc.password>data_factory_dev</jdbc.password>
+            </properties>
+        </profile>
+        <profile>
+            <id>prod</id>
+            <properties>
+                <spring.profiles.active>prod</spring.profiles.active>
+                <jdbc.user>data_factory_prod</jdbc.user>
+                <jdbc.password>data_factory_prod</jdbc.password>
+            </properties>
+        </profile>
+    </profiles>
+
     <properties>
         <java.version>1.8</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -37,6 +57,10 @@
         <jackson.csv.version>2.11.4</jackson.csv.version>
         <java.utils.version>0.3.2</java.utils.version>
         <data.factory.version>0.3.0</data.factory.version>
+
+        <!-- Application properties -->
+        <jdbc.url>jdbc:postgresql://localhost:5432/${jdbc.user}?currentSchema=log</jdbc.url>
+        <jdbc.log.table>t_batch_sample_generation_log</jdbc.log.table>
     </properties>
 
     <build>
