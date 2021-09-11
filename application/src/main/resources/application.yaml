@@ -4,12 +4,16 @@ spring:
     username: @jdbc.user@
     password: @jdbc.password@
     url: @jdbc.url@
-  hadoop:
-    hdfs:
-      uri: hdfs://quickstart-bigdata:8020
-      user: osboxes
-      defaultPermissions: -rwxr-xr-x
-
+  flyway:
+    baseline-on-migrate: true
+    table: flyway_schema_history_batch_app
+hadoop:
+  configuration:
+    uri: hdfs://quickstart-bigdata:8020
+    user: osboxes
+    defaultPermissions: -rwxr-xr-x
+    connectionTimeoutMillis: 10000
+    maxRetries: 2
 application:
   dataSources:
     -
@@ -17,10 +21,10 @@ application:
       configuration:
         generation:
           type: STANDARD
-          size: 1000000
-          dataClass: OcsDailyRecord
+          size: 20
+          dataClass: it.luca.batch.factory.model.bean.OcsDailyRecord
         output:
-          type: csv
+          type: CSV
           fileSystemType: HDFS
           path: /user/osboxes/applications/aurora_dataload/landing/ocs_daily
           fileName: ocs_daily_yyyyMMdd.csv.gz

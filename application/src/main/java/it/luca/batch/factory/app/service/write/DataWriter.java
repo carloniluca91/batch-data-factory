@@ -6,15 +6,15 @@ import java.util.List;
 
 /**
  * Interface to be extended in order to write instances of T in a given format
- * @param <T> type of data to be written
+ * @param <T> type of data to write
  */
 
 public interface DataWriter<T> {
 
     /**
-     * Write a batch of data of type T to given {@link OutputStream}
-     * @param dataClass class of data to be written
-     * @param batch {@link List} of instances of T
+     * Write a batch of records of type T to given {@link OutputStream}
+     * @param dataClass record's class
+     * @param batch {@link List} of records
      * @param outputStream {@link OutputStream}
      * @throws IOException if write operation fails
      */

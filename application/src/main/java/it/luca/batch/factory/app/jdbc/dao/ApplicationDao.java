@@ -37,6 +37,11 @@ public class ApplicationDao {
         }
     }
 
+    /**
+     * Save an instance of logging record to application DB
+     * @param record {@link BatchGenerationLogRecord} to save
+     */
+
     public void save(BatchGenerationLogRecord record) {
 
         String recordClassName = record.getClass().getSimpleName();

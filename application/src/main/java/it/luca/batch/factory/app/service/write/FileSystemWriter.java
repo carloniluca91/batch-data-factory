@@ -1,5 +1,6 @@
 package it.luca.batch.factory.app.service.write;
 
+import it.luca.batch.factory.app.configuration.HDFSClientConfiguration;
 import it.luca.batch.factory.app.service.dto.FailedFsOperation;
 import it.luca.batch.factory.app.service.dto.FsOperation;
 import it.luca.batch.factory.app.service.dto.SucceededFsOperation;
@@ -15,7 +16,7 @@ import org.apache.hadoop.fs.RawLocalFileSystem;
 import org.apache.hadoop.fs.permission.FsPermission;
 import org.apache.hadoop.hdfs.DistributedFileSystem;
 import org.apache.hadoop.security.UserGroupInformation;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -23,25 +24,23 @@ import java.security.PrivilegedAction;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+/**
+ * Component for writing data on a fileSystem
+ */
+
 @Slf4j
 @Component
 public class FileSystemWriter {
 
-    @Value("${spring.hadoop.hdfs.uri}")
-    private String HDFS_URI;
-
-    @Value("${spring.hadoop.hdfs.user}")
-    private String HDFS_USER;
-
-    @Value("${spring.hadoop.hdfs.defaultPermissions}")
-    private String HDFS_DEFAULT_PERMISSIONS;
+    @Autowired
+    private HDFSClientConfiguration clientConfiguration;
 
     /**
-     * Write batch of random data
-     * @param dataClass class of T
-     * @param batch {@link List} of instances of T
-     * @param dataSourceOutput {@link DataSourceOutput} containing settings for write operation
-     * @param <T> type of random data
+     * Write batch of records
+     * @param dataClass record's class
+     * @param batch {@link List} of records instances of T
+     * @param dataSourceOutput {@link DataSourceOutput}
+     * @param <T> record's type
      * @throws Exception if write operation fails
      */
 
@@ -59,12 +58,15 @@ public class FileSystemWriter {
             } case HDFS: {
 
                 // Set up Hadoop client configuration and initialize a distributed FS instance
-                System.setProperty("HADOOP_USER_NAME", HDFS_USER);
+                String hadoopUserName = clientConfiguration.getProperty(HDFSClientConfiguration.USER);
+                System.setProperty("HADOOP_USER_NAME", hadoopUserName);
                 Configuration configuration = new Configuration();
-                configuration.set(FileSystem.FS_DEFAULT_NAME_KEY, HDFS_URI);
+                configuration.set(FileSystem.FS_DEFAULT_NAME_KEY, clientConfiguration.getProperty(HDFSClientConfiguration.URI));
+                configuration.set("ipc.client.connect.timeout", clientConfiguration.getProperty(HDFSClientConfiguration.CONNECTION_TIMEOUT_MILLIS));
+                configuration.set("ipc.client.connect.max.retries.on.timeouts", clientConfiguration.getProperty(HDFSClientConfiguration.MAX_RETRIES));
                 FileSystem fs = DistributedFileSystem.get(configuration);
                 log.info("Successfully initialized instance of {}", DistributedFileSystem.class.getSimpleName());
-                UserGroupInformation ugi = UserGroupInformation.createRemoteUser(HDFS_USER);
+                UserGroupInformation ugi = UserGroupInformation.createRemoteUser(hadoopUserName);
 
                 // Write data
                 FsOperation fsOperation = ugi.doAs((PrivilegedAction<FsOperation>) () -> {
@@ -86,12 +88,12 @@ public class FileSystemWriter {
     }
 
     /**
-     * Write batch of random data on file system
-     * @param dataClass class of T
-     * @param batch {@link List} of instances of T
-     * @param output {@link DataSourceOutput} containing settings for write operation
+     * Write batch of records on file system
+     * @param dataClass record's class
+     * @param batch {@link List} of records
+     * @param output {@link DataSourceOutput}
      * @param fs {@link FileSystem} where data will be saved
-     * @param <T> type of random data
+     * @param <T> record's type
      * @throws IOException if write operation fails
      */
 
@@ -103,17 +105,18 @@ public class FileSystemWriter {
 
         // Create target directory if necessary
         if (!fs.exists(targetDirectory)) {
+            String defaultPermissions = clientConfiguration.getProperty(HDFSClientConfiguration.DEFAULT_PERMISSIONS);
             log.warn("Target directory {} does not exist on {}. Creating it now with permissions {}",
-                    targetDirectory, fsTypeDescription, HDFS_DEFAULT_PERMISSIONS);
-            fs.mkdirs(targetDirectory, FsPermission.valueOf(HDFS_DEFAULT_PERMISSIONS));
+                    targetDirectory, fsTypeDescription, defaultPermissions);
+            fs.mkdirs(targetDirectory, FsPermission.valueOf(defaultPermissions));
             log.info("Successfully created target directory {} with permissions {} on {}",
-                    targetDirectory, HDFS_DEFAULT_PERMISSIONS, fsTypeDescription);
+                    targetDirectory, defaultPermissions, fsTypeDescription);
         }
 
         String targetFileName = output.getFileNameWithDate();
         Path targetFilePath = new Path(String.join("/", targetPathStr, targetFileName));
         FSDataOutputStream fsDataOutputStream = fs.create(targetFilePath, false);
-        OutputType outputType = output.getOutputType();
+        OutputType outputType = output.getType();
         DataWriter<T> dataWriter;
         switch (outputType) {
             case AVRO: dataWriter = new AvroDataWriter<>();break;

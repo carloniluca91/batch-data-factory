@@ -11,7 +11,7 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
-    <groupId>it.luca</groupId>
+    <groupId>it.luca.batch</groupId>
     <artifactId>batch-data-factory</artifactId>
     <version>0.1.0</version>
     <packaging>pom</packaging>
@@ -70,7 +70,7 @@
                     <groupId>org.springframework.boot</groupId>
                     <artifactId>spring-boot-maven-plugin</artifactId>
                     <configuration>
-                        <finalName>data-factory-app-${project.version}</finalName>
+                        <finalName>${project.parent.artifactId}</finalName>
                         <excludes>
                             <exclude>
                                 <groupId>org.projectlombok</groupId>

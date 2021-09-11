@@ -1,0 +1,32 @@
+INSERT INTO @jdbc.log.table@ (
+event_ts,
+event_dt,
+datasource_id,
+datasource_class,
+generation_type,
+custom_generator_class,
+batch_size,
+datasource_type,
+file_system_type,
+file_system_path,
+generated_file_name,
+sample_generation_code,
+exception_class,
+exception_message
+)
+VALUES (
+:r.getEventTs,
+:r.getEventDt,
+:r.getDataSourceId,
+:r.getDataSourceClass,
+:r.getGenerationType,
+:r.getCustomGeneratorClass,
+:r.getBatchSize,
+:r.getDataSourceType,
+:r.getFileSystemType,
+:r.getFileSystemPath,
+:r.getGeneratedFileName,
+:r.getSampleGenerationCode,
+:r.getExceptionClass,
+:r.getExceptionMessage
+)

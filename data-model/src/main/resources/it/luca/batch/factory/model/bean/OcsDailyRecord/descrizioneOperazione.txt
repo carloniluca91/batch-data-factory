@@ -1,0 +1,3 @@
+I -> I - Inserimento
+U -> U - Aggiornamento
+D -> D - Eliminazione

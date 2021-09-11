@@ -21,9 +21,11 @@ public class BatchGenerationLogRecord {
     private final Timestamp eventTs = Timestamp.valueOf(now());
     private final Date eventDt = Date.valueOf(now().toLocalDate());
     private final String dataSourceId;
-    private final String dataSourceType;
     private final String dataSourceClass;
+    private final String generationType;
+    private final String customGeneratorClass;
     private final Integer batchSize;
+    private final String dataSourceType;
     private final String fileSystemType;
     private final String fileSystemPath;
     private final String generatedFileName;
@@ -39,12 +41,14 @@ public class BatchGenerationLogRecord {
         DataSourceOutput output = dataSource.getConfiguration().getOutput();
 
         this.dataSourceId = dataSource.getId();
-        this.dataSourceType = output.getOutputType().name();
         this.dataSourceClass = generation.getDataClass().getName();
+        this.generationType = generation.getType().name();
+        this.customGeneratorClass = orNull(generation.getGeneratorClass(), Class::getName);
         this.batchSize = generation.getSize();
+        this.dataSourceType = output.getType().name();
         this.fileSystemType = output.getFileSystemType().name();
         this.fileSystemPath = output.getPath();
-        this.generatedFileName = output.getFileName();
+        this.generatedFileName = output.getFileNameWithDate();
         this.sampleGenerationCode = isPresent(exception) ? KO : OK;
         this.exceptionClass = orNull(exception, x -> x.getClass().getName());
         this.exceptionMessage = orNull(exception, Exception::getMessage);
