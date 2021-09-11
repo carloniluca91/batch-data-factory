@@ -1,6 +1,7 @@
 package it.luca.batch.factory.app.jdbc.dao;
 
 import it.luca.batch.factory.app.jdbc.dto.BatchGenerationLogRecord;
+import it.luca.batch.factory.model.BatchDataSource;
 import lombok.extern.slf4j.Slf4j;
 import org.jdbi.v3.core.Jdbi;
 import org.jdbi.v3.postgres.PostgresPlugin;
@@ -38,16 +39,18 @@ public class ApplicationDao {
     }
 
     /**
-     * Save an instance of logging record to application DB
-     * @param record {@link BatchGenerationLogRecord} to save
+     * Save an instance of {@link BatchGenerationLogRecord} for given dataSource to application DB
+     * @param dataSource {@link BatchDataSource}
+     * @param exception (potential) {@link Exception} raised by data generation process
      */
 
-    public void save(BatchGenerationLogRecord record) {
+    public void saveLogRecordForDataSource(BatchDataSource<?> dataSource, Exception exception) {
 
-        String recordClassName = record.getClass().getSimpleName();
-        log.info("Saving current instance of {}", recordClassName);
+        String recordClassName = BatchGenerationLogRecord.class.getSimpleName();
         try {
             if (isPresent(jdbi)) {
+                log.info("Saving current instance of {}", recordClassName);
+                BatchGenerationLogRecord record = new BatchGenerationLogRecord(dataSource, exception);
                 jdbi.useHandle(handle -> handle.attach(BatchGenerationLogRecordDao.class).save(record));
                 log.info("Successfully saved current instance of {}", recordClassName);
             } else {

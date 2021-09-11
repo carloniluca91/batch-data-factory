@@ -36,10 +36,8 @@ public class Application implements ApplicationRunner {
         log.info("Found {} dataSource(s) to be generated ({})", dataSourceIds.size(), String.join("|", dataSourceIds));
         dataSourceIds.forEach(id -> {
 
-            log.info("Starting to generate data for dataSource {}", id);
             BatchDataSource<?> dataSource = yaml.getDataSourceWithId(id);
             service.generateBatch(dataSource);
-            log.info("Successfully generated data for dataSource {}", id);
         });
 
         log.info("Exiting main application. Goodbye ;)");

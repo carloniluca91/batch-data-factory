@@ -1,7 +1,6 @@
 package it.luca.batch.factory.app.service;
 
 import it.luca.batch.factory.app.jdbc.dao.ApplicationDao;
-import it.luca.batch.factory.app.jdbc.dto.BatchGenerationLogRecord;
 import it.luca.batch.factory.app.service.write.FileSystemWriter;
 import it.luca.batch.factory.model.BatchDataSource;
 import it.luca.batch.factory.model.DataSourceConfiguration;
@@ -30,18 +29,23 @@ public class ApplicationService {
 
     public <T> void generateBatch(BatchDataSource<T> dataSource) {
 
+        String dataSourceId = dataSource.getId();
         Exception exception = null;
+        log.info("Starting to generate data for dataSource {}", dataSourceId);
         try {
+
             DataSourceConfiguration<T> configuration = dataSource.getConfiguration();
             DataSourceGeneration<T> generation = configuration.getGeneration();
             List<T> batch = generation.getBatch();
             Class<T> dataClass = generation.getDataClass();
             fileSystemWriter.writeData(dataClass, batch, configuration.getOutput());
+            log.info("Successfully generated data for dataSource {}", dataSourceId);
+
         } catch (Exception e) {
-            log.error("Caught exception while generating data for {}. Stack trace: ", dataSource.getId(), e);
+            log.error("Caught exception while generating data for {}. Stack trace: ", dataSourceId, e);
             exception = e;
         }
 
-        dao.save(new BatchGenerationLogRecord(dataSource, exception));
+        dao.saveLogRecordForDataSource(dataSource, exception);
     }
 }
