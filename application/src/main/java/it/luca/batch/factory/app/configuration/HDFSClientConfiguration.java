@@ -17,10 +17,9 @@ public class HDFSClientConfiguration {
     public static final String URI = "uri";
     public static final String USER = "user";
 
-
     private Map<String, String> configuration;
 
-    public String getProperty(String key) {
+    public String get(String key) {
 
         return configuration.get(key);
     }

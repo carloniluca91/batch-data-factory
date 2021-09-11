@@ -58,12 +58,12 @@ public class FileSystemWriter {
             } case HDFS: {
 
                 // Set up Hadoop client configuration and initialize a distributed FS instance
-                String hadoopUserName = clientConfiguration.getProperty(HDFSClientConfiguration.USER);
+                String hadoopUserName = clientConfiguration.get(HDFSClientConfiguration.USER);
                 System.setProperty("HADOOP_USER_NAME", hadoopUserName);
                 Configuration configuration = new Configuration();
-                configuration.set(FileSystem.FS_DEFAULT_NAME_KEY, clientConfiguration.getProperty(HDFSClientConfiguration.URI));
-                configuration.set("ipc.client.connect.timeout", clientConfiguration.getProperty(HDFSClientConfiguration.CONNECTION_TIMEOUT_MILLIS));
-                configuration.set("ipc.client.connect.max.retries.on.timeouts", clientConfiguration.getProperty(HDFSClientConfiguration.MAX_RETRIES));
+                configuration.set(FileSystem.FS_DEFAULT_NAME_KEY, clientConfiguration.get(HDFSClientConfiguration.URI));
+                configuration.set("ipc.client.connect.timeout", clientConfiguration.get(HDFSClientConfiguration.CONNECTION_TIMEOUT_MILLIS));
+                configuration.set("ipc.client.connect.max.retries.on.timeouts", clientConfiguration.get(HDFSClientConfiguration.MAX_RETRIES));
                 FileSystem fs = DistributedFileSystem.get(configuration);
                 log.info("Successfully initialized instance of {}", DistributedFileSystem.class.getSimpleName());
                 UserGroupInformation ugi = UserGroupInformation.createRemoteUser(hadoopUserName);
@@ -105,7 +105,7 @@ public class FileSystemWriter {
 
         // Create target directory if necessary
         if (!fs.exists(targetDirectory)) {
-            String defaultPermissions = clientConfiguration.getProperty(HDFSClientConfiguration.DEFAULT_PERMISSIONS);
+            String defaultPermissions = clientConfiguration.get(HDFSClientConfiguration.DEFAULT_PERMISSIONS);
             log.warn("Target directory {} does not exist on {}. Creating it now with permissions {}",
                     targetDirectory, fsTypeDescription, defaultPermissions);
             fs.mkdirs(targetDirectory, FsPermission.valueOf(defaultPermissions));
