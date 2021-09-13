@@ -114,10 +114,13 @@ public class FileSystemWriter {
                     targetDirectory, defaultPermissions, fsDescription);
         }
 
+        // Define target file path and open output stream
         String targetFileName = target.getFileName();
         Path targetFilePath = new Path(String.join("/", targetPathStr, targetFileName));
         boolean overwrite = orElse(target.getOverwrite(), Function.identity(), false);
         FSDataOutputStream fsDataOutputStream = fs.create(targetFilePath, overwrite);
+
+        // Write data depending on states serialization format
         OutputSerialization serialization = output.getSerialization();
         DataWriter<T> dataWriter;
         if (serialization instanceof AvroSerialization) {
@@ -125,7 +128,8 @@ public class FileSystemWriter {
         } else if (serialization instanceof CsvSerialization){
             dataWriter = new CsvDataWriter<>(target.isZipFile());
         } else {
-            throw new IllegalArgumentException("");
+            throw new IllegalArgumentException("Unable to find subClass for current instance of "
+                    .concat(OutputSerialization.class.getSimpleName()));
         }
 
         String dataClassName = dataClass.getSimpleName();
