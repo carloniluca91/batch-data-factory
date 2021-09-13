@@ -1,5 +1,7 @@
 package it.luca.batch.factory.app.service.write;
 
+import it.luca.batch.factory.model.output.OutputSerialization;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
@@ -19,5 +21,5 @@ public interface DataWriter<T> {
      * @throws IOException if write operation fails
      */
 
-    void write(Class<T> dataClass, List<T> batch, OutputStream outputStream) throws IOException;
+    void write(Class<T> dataClass, List<T> batch, OutputStream outputStream, OutputSerialization serialization) throws IOException;
 }

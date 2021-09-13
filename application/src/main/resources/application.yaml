@@ -14,18 +14,3 @@ hadoop:
     defaultPermissions: -rwxr-xr-x
     connectionTimeoutMillis: 10000
     maxRetries: 2
-application:
-  dataSources:
-    -
-      id: OCS_DAILY
-      configuration:
-        generation:
-          type: STANDARD
-          size: 20
-          dataClass: it.luca.batch.factory.model.bean.OcsDailyRecord
-        output:
-          type: CSV
-          fileSystemType: HDFS
-          path: /user/osboxes/applications/aurora_dataload/landing/ocs_daily
-          fileName: ocs_daily_yyyyMMdd.csv.gz
-          datePattern: yyyyMMdd

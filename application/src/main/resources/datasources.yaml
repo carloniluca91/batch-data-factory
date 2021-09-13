@@ -1,0 +1,25 @@
+dataSources:
+  -
+    id: OCS_DAILY
+    configuration:
+      generation:
+        type: STANDARD
+        size: 50
+        dataClass: it.luca.batch.factory.model.bean.OcsDailyRecord
+      output:
+        target:
+          type: LOCAL
+          overwrite: true
+          path: C:/Users/Thinkopen/Downloads/ocs_daily
+          fileName: ocs_daily_yyyyMMdd
+          datePattern: yyyyMMdd
+        serialization:
+          format: AVRO
+          typeConversions:
+            -
+              conversionClass: aa
+              parameters:
+                - pattern: dd/MM/yyyy
+            # separator: PIPE
+            # header: true
+            # quoteStrings: false

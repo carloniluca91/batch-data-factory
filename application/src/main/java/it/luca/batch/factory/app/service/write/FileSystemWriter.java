@@ -4,15 +4,10 @@ import it.luca.batch.factory.app.configuration.HDFSClientConfiguration;
 import it.luca.batch.factory.app.service.dto.FailedFsOperation;
 import it.luca.batch.factory.app.service.dto.FsOperation;
 import it.luca.batch.factory.app.service.dto.SucceededFsOperation;
-import it.luca.batch.factory.model.output.DataSourceOutput;
-import it.luca.batch.factory.model.output.DataSourceOutput.FileSystemType;
-import it.luca.batch.factory.model.output.DataSourceOutput.OutputType;
+import it.luca.batch.factory.model.output.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.fs.FSDataOutputStream;
-import org.apache.hadoop.fs.FileSystem;
-import org.apache.hadoop.fs.Path;
-import org.apache.hadoop.fs.RawLocalFileSystem;
+import org.apache.hadoop.fs.*;
 import org.apache.hadoop.fs.permission.FsPermission;
 import org.apache.hadoop.hdfs.DistributedFileSystem;
 import org.apache.hadoop.security.UserGroupInformation;
@@ -23,6 +18,9 @@ import java.io.IOException;
 import java.security.PrivilegedAction;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.function.Function;
+
+import static it.luca.utils.functional.Optional.orElse;
 
 /**
  * Component for writing data on a fileSystem
@@ -46,13 +44,14 @@ public class FileSystemWriter {
 
     public <T> void writeData(Class<T> dataClass, List<T> batch, DataSourceOutput dataSourceOutput) throws Exception {
 
-        FileSystemType fileSystemType = dataSourceOutput.getFileSystemType();
+        OutputTarget target = dataSourceOutput.getTarget();
+        OutputTarget.FileSystemType fileSystemType = target.getFileSystemType();
         switch (fileSystemType) {
             case LOCAL: {
 
                 // Initialize a local FS instance
-                FileSystem fs = new RawLocalFileSystem();
-                log.info("Successfully initialized instance of {}", RawLocalFileSystem.class.getSimpleName());
+                FileSystem fs = FileSystem.getLocal(new Configuration());
+                log.info("Successfully initialized instance of {}", LocalFileSystem.class.getSimpleName());
                 writeToFileSystem(dataClass, batch, dataSourceOutput, fs);
                 break;
             } case HDFS: {
@@ -83,7 +82,8 @@ public class FileSystemWriter {
                     throw fsOperation.asFailure().getException();
                 }
                 break;
-            } default: throw new NoSuchElementException(String.format("Unmatched %s: %s", FileSystemType.class.getSimpleName(), fileSystemType));
+            } default: throw new NoSuchElementException(String.format("Unmatched %s: %s",
+                    fileSystemType.getClass().getSimpleName(), fileSystemType));
         }
     }
 
@@ -99,38 +99,41 @@ public class FileSystemWriter {
 
     private <T> void writeToFileSystem(Class<T> dataClass, List<T> batch, DataSourceOutput output, FileSystem fs) throws IOException {
 
-        String targetPathStr = output.getPath();
+        OutputTarget target = output.getTarget();
+        String targetPathStr = target.getTargetPath();
         Path targetDirectory = new Path(targetPathStr);
-        String fsTypeDescription = output.getFileSystemType().getDescription();
+        String fsDescription = target.getFileSystemType().getDescription();
 
         // Create target directory if necessary
         if (!fs.exists(targetDirectory)) {
             String defaultPermissions = clientConfiguration.get(HDFSClientConfiguration.DEFAULT_PERMISSIONS);
             log.warn("Target directory {} does not exist on {}. Creating it now with permissions {}",
-                    targetDirectory, fsTypeDescription, defaultPermissions);
+                    targetDirectory, fsDescription, defaultPermissions);
             fs.mkdirs(targetDirectory, FsPermission.valueOf(defaultPermissions));
             log.info("Successfully created target directory {} with permissions {} on {}",
-                    targetDirectory, defaultPermissions, fsTypeDescription);
+                    targetDirectory, defaultPermissions, fsDescription);
         }
 
-        String targetFileName = output.getFileNameWithDate();
+        String targetFileName = target.getFileName();
         Path targetFilePath = new Path(String.join("/", targetPathStr, targetFileName));
-        FSDataOutputStream fsDataOutputStream = fs.create(targetFilePath, false);
-        OutputType outputType = output.getType();
+        boolean overwrite = orElse(target.getOverwrite(), Function.identity(), false);
+        FSDataOutputStream fsDataOutputStream = fs.create(targetFilePath, overwrite);
+        OutputSerialization serialization = output.getSerialization();
         DataWriter<T> dataWriter;
-        switch (outputType) {
-            case AVRO: dataWriter = new AvroDataWriter<>();break;
-            case CSV: dataWriter = new CsvDataWriter<>(targetFileName.toLowerCase().endsWith(".csv.gz")); break;
-            default: throw new NoSuchElementException(String.format("Unmatched %s: %s", OutputType.class.getSimpleName(), outputType));
+        if (serialization instanceof AvroSerialization) {
+            dataWriter = new AvroDataWriter<>();
+        } else if (serialization instanceof CsvSerialization){
+            dataWriter = new CsvDataWriter<>(target.isZipFile());
+        } else {
+            throw new IllegalArgumentException("");
         }
 
         String dataClassName = dataClass.getSimpleName();
-        String outputDataFormat = outputType.name().toLowerCase();
-        String fsDescription = output.getFileSystemType().getDescription();
+        String serializationFormat = serialization.getType();
         log.info("Starting to write all of {} instance(s) of {} as .{} file on {} at path {}",
-                batch.size(), dataClassName, outputDataFormat, fsDescription, targetFilePath);
-        dataWriter.write(dataClass, batch, fsDataOutputStream);
+                batch.size(), dataClassName, serializationFormat, fsDescription, targetFilePath);
+        dataWriter.write(dataClass, batch, fsDataOutputStream, serialization);
         log.info("Successfully written all of {} instance(s) of {} as .{} file on {} at path {}",
-                batch.size(), dataClassName, outputDataFormat, fsDescription, targetFilePath);
+                batch.size(), dataClassName, serializationFormat, fsDescription, targetFilePath);
     }
 }

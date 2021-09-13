@@ -1,20 +1,24 @@
-package it.luca.batch.factory.app.configuration;
+package it.luca.batch.factory.model;
 
-import it.luca.batch.factory.model.BatchDataSource;
-import lombok.Data;
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.stereotype.Component;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Getter;
 
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
-@Data
-@Component
-@ConfigurationProperties(prefix = "application")
-public class ApplicationYaml {
+@Getter
+public class DataSourcesWrapper {
 
-    private List<BatchDataSource<?>> dataSources;
+    public static final String DATA_SOURCES = "dataSources";
+    private final List<BatchDataSource<?>> dataSources;
+
+    @JsonCreator
+    public DataSourcesWrapper(@JsonProperty(DATA_SOURCES) List<BatchDataSource<?>> dataSources) {
+
+        this.dataSources = dataSources;
+    }
 
     public BatchDataSource<?> getDataSourceWithId(String id) {
 

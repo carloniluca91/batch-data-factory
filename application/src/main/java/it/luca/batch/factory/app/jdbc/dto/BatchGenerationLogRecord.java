@@ -1,6 +1,7 @@
 package it.luca.batch.factory.app.jdbc.dto;
 
 import it.luca.batch.factory.model.BatchDataSource;
+import it.luca.batch.factory.model.generation.CustomGeneration;
 import it.luca.batch.factory.model.generation.DataSourceGeneration;
 import it.luca.batch.factory.model.output.DataSourceOutput;
 import lombok.Getter;
@@ -42,13 +43,16 @@ public class BatchGenerationLogRecord {
 
         this.dataSourceId = dataSource.getId();
         this.dataSourceClass = generation.getDataClass().getName();
-        this.generationType = generation.getType().name();
-        this.customGeneratorClass = orNull(generation.getGeneratorClass(), Class::getName);
+        this.generationType = generation.getType();
+        this.customGeneratorClass = generation instanceof CustomGeneration ?
+                orNull(((CustomGeneration<?>) generation).getGeneratorClass(), Class::getName) :
+                null;
+
         this.batchSize = generation.getSize();
-        this.dataSourceType = output.getType().name();
-        this.fileSystemType = output.getFileSystemType().name();
-        this.fileSystemPath = output.getPath();
-        this.generatedFileName = output.getFileNameWithDate();
+        this.dataSourceType = output.getSerialization().getType();
+        this.fileSystemType = output.getTarget().getFileSystemType().name();
+        this.fileSystemPath = output.getTarget().getTargetPath();
+        this.generatedFileName = output.getTarget().getFileNameWithDate();
         this.sampleGenerationCode = isPresent(exception) ? KO : OK;
         this.exceptionClass = orNull(exception, x -> x.getClass().getName());
         this.exceptionMessage = orNull(exception, Exception::getMessage);
