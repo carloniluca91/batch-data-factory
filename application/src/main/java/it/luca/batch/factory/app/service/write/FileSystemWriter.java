@@ -7,14 +7,16 @@ import it.luca.batch.factory.app.service.dto.SucceededFsOperation;
 import it.luca.batch.factory.model.output.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.fs.*;
+import org.apache.hadoop.fs.FSDataOutputStream;
+import org.apache.hadoop.fs.FileSystem;
+import org.apache.hadoop.fs.LocalFileSystem;
+import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.fs.permission.FsPermission;
 import org.apache.hadoop.hdfs.DistributedFileSystem;
 import org.apache.hadoop.security.UserGroupInformation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.io.IOException;
 import java.security.PrivilegedAction;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -72,7 +74,7 @@ public class FileSystemWriter {
                     try {
                         writeToFileSystem(dataClass, batch, dataSourceOutput, fs);
                         return new SucceededFsOperation();
-                    } catch (IOException e) {
+                    } catch (Exception e) {
                         return new FailedFsOperation(e);
                     }
                 });
@@ -94,13 +96,14 @@ public class FileSystemWriter {
      * @param output {@link DataSourceOutput}
      * @param fs {@link FileSystem} where data will be saved
      * @param <T> record's type
-     * @throws IOException if write operation fails
+     * @throws Exception if write operation fails
      */
 
-    private <T> void writeToFileSystem(Class<T> dataClass, List<T> batch, DataSourceOutput output, FileSystem fs) throws IOException {
+    private <T> void writeToFileSystem(Class<T> dataClass, List<T> batch, DataSourceOutput output, FileSystem fs) throws Exception {
 
         OutputTarget target = output.getTarget();
-        String targetPathStr = target.getTargetPath();
+        OutputSerialization serialization = output.getSerialization();
+        String targetPathStr = target.getPath();
         Path targetDirectory = new Path(targetPathStr);
         String fsDescription = target.getFileSystemType().getDescription();
 
@@ -115,25 +118,24 @@ public class FileSystemWriter {
         }
 
         // Define target file path and open output stream
-        String targetFileName = target.getFileName();
+        String targetFileName = serialization.getFileNameWithDateAndExtension();
         Path targetFilePath = new Path(String.join("/", targetPathStr, targetFileName));
         boolean overwrite = orElse(target.getOverwrite(), Function.identity(), false);
         FSDataOutputStream fsDataOutputStream = fs.create(targetFilePath, overwrite);
 
         // Write data depending on states serialization format
-        OutputSerialization serialization = output.getSerialization();
         DataWriter<T> dataWriter;
         if (serialization instanceof AvroSerialization) {
             dataWriter = new AvroDataWriter<>();
         } else if (serialization instanceof CsvSerialization){
-            dataWriter = new CsvDataWriter<>(target.isZipFile());
+            dataWriter = new CsvDataWriter<>();
         } else {
             throw new IllegalArgumentException("Unable to find subClass for current instance of "
                     .concat(OutputSerialization.class.getSimpleName()));
         }
 
         String dataClassName = dataClass.getSimpleName();
-        String serializationFormat = serialization.getType();
+        String serializationFormat = serialization.getFormat().name();
         log.info("Starting to write all of {} instance(s) of {} as .{} file on {} at path {}",
                 batch.size(), dataClassName, serializationFormat, fsDescription, targetFilePath);
         dataWriter.write(dataClass, batch, fsDataOutputStream, serialization);

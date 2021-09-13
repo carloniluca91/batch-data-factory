@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Map;
+import java.util.function.Function;
 
 @Slf4j
 @Getter
@@ -22,65 +23,63 @@ public class CsvSerialization extends OutputSerialization {
         private final char separator;
     }
 
-    public final static String OPTIONS = "options";
-    public final static String SEPARATOR = "separator";
-    public final static String HEADER = "header";
-    public final static String QUOTE_STRINGS = "quoteStrings";
+    public static final String ZIP = "zip";
+    public static final String ZIP_EXTENSION = ".gz";
+    public static final String OPTIONS = "options";
+    public static final String SEPARATOR = "separator";
+    public static final String HEADER = "header";
+    public static final String QUOTE_STRINGS = "quoteStrings";
 
+    private final Boolean zip;
     private final Map<String, String> options;
 
     public CsvSerialization(@JsonProperty(FORMAT) String type,
+                            @JsonProperty(FILE_NAME) String fileName,
+                            @JsonProperty(DATE_PATTERN) String datePattern,
+                            @JsonProperty(ZIP) Boolean zip,
                             @JsonProperty(OPTIONS) Map<String, String> options) {
 
-        super(type);
+        super(type, fileName, datePattern);
+        this.zip = zip;
         this.options = options;
+    }
+
+    private <T> T getOrElse(String key, Function<String, T> function, T defaultValue) {
+
+        T value;
+        boolean usingDefault;
+        if (options.containsKey(key)) {
+            value = function.apply(options.get(key));
+            usingDefault = false;
+        } else {
+            value = defaultValue;
+            usingDefault = true;
+        }
+
+        log.info("Final value for key {} is '{}' ({})", key, value, usingDefault ? "DEFAULT" : "CUSTOM");
+        return value;
     }
 
     public char getSeparator() {
 
-        CSVSeparator separator;
-        boolean usingDefault;
-        if (options.containsKey(SEPARATOR)) {
-            separator = CSVSeparator.valueOf(options.get(SEPARATOR).toUpperCase());
-            usingDefault = false;
-        } else {
-            separator = CSVSeparator.COMMA;
-            usingDefault = true;
-        }
-
-        log.info("Using separator {} ({})", separator, usingDefault ? "DEFAULT" : "CUSTOM");
-        return separator.getSeparator();
+       return getOrElse(SEPARATOR, s -> CSVSeparator.valueOf(s.toUpperCase()), CSVSeparator.COMMA)
+               .getSeparator();
     }
 
     public boolean useHeader() {
 
-        boolean writeHeader;
-        boolean usingDefault;
-        if (options.containsKey(HEADER)) {
-            writeHeader = Boolean.parseBoolean(options.get(HEADER));
-            usingDefault = false;
-        } else {
-            writeHeader = true;
-            usingDefault = true;
-        }
-
-        log.info("Flag for writing csv header set to {} ({})", writeHeader, usingDefault ? "DEFAULT" : "CUSTOM");
-        return writeHeader;
+        return getOrElse(HEADER, Boolean::parseBoolean, true);
     }
 
     public boolean quoteStrings() {
 
-        boolean quoteStrings;
-        boolean usingDefault;
-        if (options.containsKey(QUOTE_STRINGS)) {
-            quoteStrings = Boolean.parseBoolean(options.get(QUOTE_STRINGS));
-            usingDefault = false;
-        } else {
-            quoteStrings = false;
-            usingDefault = true;
-        }
+        return getOrElse(QUOTE_STRINGS, Boolean::parseBoolean, false);
+    }
 
-        log.info("Flag for quoting strings set to {} ({})", quoteStrings, usingDefault ? "DEFAULT" : "CUSTOM");
-        return quoteStrings;
+    @Override
+    public String getFileNameWithDateAndExtension() {
+
+        String fileName = super.getFileNameWithDateAndExtension();
+        return zip ? fileName.concat(ZIP_EXTENSION) : fileName;
     }
 }

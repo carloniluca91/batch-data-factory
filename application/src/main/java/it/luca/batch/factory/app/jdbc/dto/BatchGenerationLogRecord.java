@@ -49,10 +49,10 @@ public class BatchGenerationLogRecord {
                 null;
 
         this.batchSize = generation.getSize();
-        this.dataSourceType = output.getSerialization().getType();
+        this.dataSourceType = output.getSerialization().getFormat().name();
         this.fileSystemType = output.getTarget().getFileSystemType().name();
-        this.fileSystemPath = output.getTarget().getTargetPath();
-        this.generatedFileName = output.getTarget().getFileNameWithDate();
+        this.fileSystemPath = output.getTarget().getPath();
+        this.generatedFileName = output.getSerialization().getFileNameWithDateAndExtension();
         this.sampleGenerationCode = isPresent(exception) ? KO : OK;
         this.exceptionClass = orNull(exception, x -> x.getClass().getName());
         this.exceptionMessage = orNull(exception, Exception::getMessage);

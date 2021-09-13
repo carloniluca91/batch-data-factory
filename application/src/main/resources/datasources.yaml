@@ -11,15 +11,31 @@ dataSources:
           type: LOCAL
           overwrite: true
           path: C:/Users/Thinkopen/Downloads/ocs_daily
+        serialization:
+          format: CSV
           fileName: ocs_daily_yyyyMMdd
           datePattern: yyyyMMdd
+          zip: true
+          options:
+            separator: PIPE
+  -
+    id: HORIZON
+    configuration:
+      generation:
+        type: STANDARD
+        size: 10
+        dataClass: it.luca.batch.factory.model.bean.HorizonRecord
+      output:
+        target:
+          type: LOCAL
+          overwrite: true
+          path: C:/Users/Thinkopen/Downloads/horizon
         serialization:
           format: AVRO
-          typeConversions:
+          fileName: horizon_yyyyMMdd
+          datePattern: yyyyMMdd
+          conversions:
             -
-              conversionClass: aa
+              id: LOCAL_DATETIME
               parameters:
-                - pattern: dd/MM/yyyy
-            # separator: PIPE
-            # header: true
-            # quoteStrings: false
+                pattern: dd/MM/yyyy

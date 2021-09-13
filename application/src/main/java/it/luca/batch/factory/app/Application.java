@@ -1,5 +1,6 @@
 package it.luca.batch.factory.app;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import it.luca.batch.factory.app.service.ApplicationService;
@@ -43,6 +44,7 @@ public class Application implements ApplicationRunner {
         String dataSourceYaml = getValueOfOption(args, DATASOURCE_YAML).get(0);
         List<String> dataSourceIds = getValueOfOption(args, ID);
         DataSourcesWrapper wrapper = new ObjectMapper(new YAMLFactory())
+                .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
                 .readValue(new File(dataSourceYaml), DataSourcesWrapper.class);
 
         log.info("Found {} dataSource(s) to be generated ({})", dataSourceIds.size(), String.join("|", dataSourceIds));

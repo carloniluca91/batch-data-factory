@@ -21,8 +21,6 @@ import java.util.zip.ZipOutputStream;
 @AllArgsConstructor
 public class CsvDataWriter<T> implements DataWriter<T> {
 
-    private final boolean isZip;
-
     @Override
     public void write(Class<T> dataClass, List<T> batch, OutputStream outputStream, OutputSerialization serialization) throws IOException {
 
@@ -37,7 +35,7 @@ public class CsvDataWriter<T> implements DataWriter<T> {
                 schemaWithSeparatorAndHeader.withoutQuoteChar();
 
         OutputStream stream;
-        if (isZip) {
+        if (csvSerialization.getZip()) {
             ZipOutputStream zipOutputStream = new ZipOutputStream(outputStream);
             zipOutputStream.putNextEntry(new ZipEntry("extraction.csv"));
             stream = zipOutputStream;

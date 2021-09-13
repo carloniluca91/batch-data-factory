@@ -53,6 +53,7 @@
         <maven.compiler.target>${java.version}</maven.compiler.target>
 
         <jdbi.version>3.20.1</jdbi.version>
+        <avro.version>1.8.2-cdh6.3.2</avro.version>
         <hadoop.client.version>3.0.0-cdh6.3.2</hadoop.client.version>
         <jackson.csv.version>2.11.4</jackson.csv.version>
         <java.utils.version>0.3.2</java.utils.version>
@@ -144,6 +145,12 @@
                         <artifactId>hadoop-annotations</artifactId>
                     </exclusion>
                 </exclusions>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.avro</groupId>
+                <artifactId>avro</artifactId>
+                <version>${avro.version}</version>
             </dependency>
 
             <dependency>
