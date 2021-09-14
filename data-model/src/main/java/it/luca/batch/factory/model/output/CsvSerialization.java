@@ -10,6 +10,7 @@ import java.util.function.Function;
 
 @Slf4j
 @Getter
+@SuppressWarnings("rawtypes")
 public class CsvSerialization extends OutputSerialization {
 
     @Getter

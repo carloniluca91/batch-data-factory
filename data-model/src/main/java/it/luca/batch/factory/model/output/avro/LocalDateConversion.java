@@ -39,6 +39,11 @@ public class LocalDateConversion extends JavaTypeConversion<LocalDate> {
             public CharSequence toCharSequence(LocalDate value, Schema schema, LogicalType type) {
                 return value.format(DateTimeFormatter.ofPattern(pattern));
             }
+
+            @Override
+            public Schema getRecommendedSchema() {
+                return Schema.create(Schema.Type.STRING);
+            }
         };
     }
 }

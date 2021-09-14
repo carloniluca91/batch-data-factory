@@ -34,11 +34,9 @@ public class ApplicationService {
         log.info("Starting to generate data for dataSource {}", dataSourceId);
         try {
 
-            DataSourceConfiguration<T> configuration = dataSource.getConfiguration();
-            DataSourceGeneration<T> generation = configuration.getGeneration();
+            DataSourceGeneration<T> generation = dataSource.getConfiguration().getGeneration();
             List<T> batch = generation.getBatch();
-            Class<T> dataClass = generation.getDataClass();
-            fileSystemWriter.writeData(dataClass, batch, configuration.getOutput());
+            fileSystemWriter.writeData(batch, dataSource);
             log.info("Successfully generated data for dataSource {}", dataSourceId);
 
         } catch (Exception e) {

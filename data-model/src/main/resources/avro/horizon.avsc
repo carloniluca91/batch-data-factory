@@ -1,0 +1,8 @@
+{
+  "namespace": "it.luca.batch.factory.model.bean.horizon",
+  "name": "HorizonAvroRecord",
+  "type": "record",
+  "fields": [
+    {"name": "data_invio", "type": ["string", "null"]}
+  ]
+}

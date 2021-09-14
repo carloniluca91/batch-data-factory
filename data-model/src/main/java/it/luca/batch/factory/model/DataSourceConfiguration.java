@@ -18,11 +18,11 @@ public class DataSourceConfiguration<T> {
     public static final String OUTPUT = "output";
 
     private final DataSourceGeneration<T> generation;
-    private final DataSourceOutput output;
+    private final DataSourceOutput<T> output;
 
     @JsonCreator
     public DataSourceConfiguration(@JsonProperty(GENERATION) DataSourceGeneration<T> generation,
-                                   @JsonProperty(OUTPUT) DataSourceOutput output) {
+                                   @JsonProperty(OUTPUT) DataSourceOutput<T> output) {
 
         this.generation = generation;
         this.output = output;

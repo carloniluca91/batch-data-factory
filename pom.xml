@@ -68,6 +68,25 @@
         <pluginManagement>
             <plugins>
                 <plugin>
+                    <groupId>org.apache.avro</groupId>
+                    <artifactId>avro-maven-plugin</artifactId>
+                    <version>${avro.version}</version>
+                    <configuration>
+                        <sourceDirectory>${project.basedir}/src/main/resources/avro/</sourceDirectory>
+                        <outputDirectory>${project.basedir}/src/main/java/</outputDirectory>
+                        <stringType>String</stringType>
+                        <fieldVisibility>private</fieldVisibility>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <phase>generate-sources</phase>
+                            <goals>
+                                <goal>schema</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
                     <groupId>org.springframework.boot</groupId>
                     <artifactId>spring-boot-maven-plugin</artifactId>
                     <configuration>
@@ -93,6 +112,13 @@
             </resource>
         </resources>
     </build>
+
+    <pluginRepositories>
+        <pluginRepository>
+            <id>Cloudera</id>
+            <url>https://repository.cloudera.com/artifactory/cloudera-repos/</url>
+        </pluginRepository>
+    </pluginRepositories>
 
     <repositories>
         <repository>

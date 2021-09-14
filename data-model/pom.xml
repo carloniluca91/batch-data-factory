@@ -13,6 +13,16 @@
     <artifactId>data-model</artifactId>
     <version>0.1.0</version>
 
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.avro</groupId>
+                <!--suppress MavenModelInspection -->
+                <artifactId>avro-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+
     <dependencies>
         <dependency>
             <groupId>org.projectlombok</groupId>

@@ -17,7 +17,7 @@ import static it.luca.utils.time.Supplier.now;
         @JsonSubTypes.Type(value = AvroSerialization.class, name = OutputSerialization.AVRO),
         @JsonSubTypes.Type(value = CsvSerialization.class, name = OutputSerialization.CSV)
 })
-public abstract class OutputSerialization {
+public abstract class OutputSerialization<T> {
 
     @Getter
     @AllArgsConstructor

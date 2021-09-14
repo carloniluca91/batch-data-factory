@@ -18,11 +18,14 @@ import java.util.zip.ZipOutputStream;
  * @param <T> type of data to be written
  */
 
-@AllArgsConstructor
-public class CsvDataWriter<T> implements DataWriter<T> {
+public class CsvDataWriter<T> extends DataWriter<T> {
+
+    public CsvDataWriter(Class<T> dataClass) {
+        super(dataClass);
+    }
 
     @Override
-    public void write(Class<T> dataClass, List<T> batch, OutputStream outputStream, OutputSerialization serialization) throws IOException {
+    public void write(List<T> batch, OutputSerialization<T> serialization, OutputStream outputStream) throws IOException {
 
         CsvSerialization csvSerialization = (CsvSerialization) serialization;
         CsvMapper csvMapper = new CsvMapper();

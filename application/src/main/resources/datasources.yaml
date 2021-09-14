@@ -5,7 +5,7 @@ dataSources:
       generation:
         type: STANDARD
         size: 50
-        dataClass: it.luca.batch.factory.model.bean.OcsDailyRecord
+        dataClass: it.luca.batch.factory.model.bean.ocs.OcsDailyRecord
       output:
         target:
           type: LOCAL
@@ -24,7 +24,7 @@ dataSources:
       generation:
         type: STANDARD
         size: 10
-        dataClass: it.luca.batch.factory.model.bean.HorizonRecord
+        dataClass: it.luca.batch.factory.model.bean.horizon.HorizonRecord
       output:
         target:
           type: LOCAL
@@ -34,6 +34,8 @@ dataSources:
           format: AVRO
           fileName: horizon_yyyyMMdd
           datePattern: yyyyMMdd
+          avroRecordClass: it.luca.batch.factory.model.bean.horizon.HorizonAvroRecord
+          avroRecordMapperClass: it.luca.batch.factory.model.bean.horizon.HorizonAvroMapper
           conversions:
             -
               id: LOCAL_DATETIME

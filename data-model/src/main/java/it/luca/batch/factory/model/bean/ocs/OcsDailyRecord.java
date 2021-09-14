@@ -1,4 +1,4 @@
-package it.luca.batch.factory.model.bean;
+package it.luca.batch.factory.model.bean.ocs;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;

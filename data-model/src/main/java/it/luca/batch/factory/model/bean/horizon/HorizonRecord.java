@@ -1,4 +1,4 @@
-package it.luca.batch.factory.model.bean;
+package it.luca.batch.factory.model.bean.horizon;
 
 import it.luca.data.factory.annotation.RandomDateTime;
 import it.luca.data.factory.generator.function.Now;
