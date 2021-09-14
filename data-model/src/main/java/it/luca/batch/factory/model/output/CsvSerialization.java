@@ -10,8 +10,7 @@ import java.util.function.Function;
 
 @Slf4j
 @Getter
-@SuppressWarnings("rawtypes")
-public class CsvSerialization extends OutputSerialization {
+public class CsvSerialization<T> extends DataSourceSerialization<T> {
 
     @Getter
     @AllArgsConstructor
@@ -45,9 +44,18 @@ public class CsvSerialization extends OutputSerialization {
         this.options = options;
     }
 
-    private <T> T getOrElse(String key, Function<String, T> function, T defaultValue) {
+    /**
+     * Get value of given key, or default if missing
+     * @param key key
+     * @param function {@link Function} for converting string value to instance of T
+     * @param defaultValue default value
+     * @param <V> type of return value
+     * @return value of given key if it exists, the default value otherwise
+     */
 
-        T value;
+    private <V> V getOrElse(String key, Function<String, V> function, V defaultValue) {
+
+        V value;
         boolean usingDefault;
         if (options.containsKey(key)) {
             value = function.apply(options.get(key));
@@ -61,16 +69,31 @@ public class CsvSerialization extends OutputSerialization {
         return value;
     }
 
+    /**
+     * Return separator to be used during .csv serialization
+     * @return {@link Character}
+     */
+
     public char getSeparator() {
 
        return getOrElse(SEPARATOR, s -> CSVSeparator.valueOf(s.toUpperCase()), CSVSeparator.COMMA)
                .getSeparator();
     }
 
+    /**
+     * Return whether field names should be written as header of .csv file
+     * @return {@link Boolean} (default true)
+     */
+
     public boolean useHeader() {
 
         return getOrElse(HEADER, Boolean::parseBoolean, true);
     }
+
+    /**
+     * Return whether string fields should be written in quotes
+     * @return {@link Boolean} (default false)
+     */
 
     public boolean quoteStrings() {
 

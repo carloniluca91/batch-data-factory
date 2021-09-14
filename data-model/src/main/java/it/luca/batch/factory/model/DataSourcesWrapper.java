@@ -12,17 +12,23 @@ import java.util.stream.Collectors;
 public class DataSourcesWrapper {
 
     public static final String DATA_SOURCES = "dataSources";
-    private final List<BatchDataSource<?>> dataSources;
+    private final List<DataSource<?>> dataSources;
 
     @JsonCreator
-    public DataSourcesWrapper(@JsonProperty(DATA_SOURCES) List<BatchDataSource<?>> dataSources) {
+    public DataSourcesWrapper(@JsonProperty(DATA_SOURCES) List<DataSource<?>> dataSources) {
 
         this.dataSources = dataSources;
     }
 
-    public BatchDataSource<?> getDataSourceWithId(String id) {
+    /**
+     * Retrieve dataSource configuration for given dataSource id
+     * @param id dataSource id
+     * @return {@link DataSource}
+     */
 
-        List<BatchDataSource<?>> matchingDataSources = dataSources.stream()
+    public DataSource<?> getDataSourceWithId(String id) {
+
+        List<DataSource<?>> matchingDataSources = dataSources.stream()
                 .filter(x -> x.getId().equalsIgnoreCase(id))
                 .collect(Collectors.toList());
 

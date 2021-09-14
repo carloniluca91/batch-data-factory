@@ -4,7 +4,7 @@ import it.luca.batch.factory.app.configuration.HDFSClientConfiguration;
 import it.luca.batch.factory.app.service.dto.FailedFsOperation;
 import it.luca.batch.factory.app.service.dto.FsOperation;
 import it.luca.batch.factory.app.service.dto.SucceededFsOperation;
-import it.luca.batch.factory.model.BatchDataSource;
+import it.luca.batch.factory.model.DataSourceConfiguration;
 import it.luca.batch.factory.model.output.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.avro.specific.SpecificRecord;
@@ -40,40 +40,40 @@ public class FileSystemWriter {
     /**
      * Write batch of records
      * @param batch {@link List} of records instances of T
-     * @param dataSource {@link DataSourceOutput}
+     * @param configuration {@link DataSourceConfiguration}
      * @param <T> record's type
      * @throws Exception if write operation fails
      */
 
-    public <T> void writeData(List<T> batch, BatchDataSource<T> dataSource) throws Exception {
+    public <T> void writeData(List<T> batch, DataSourceConfiguration<T> configuration) throws Exception {
 
-        OutputTarget target = dataSource.getConfiguration().getOutput().getTarget();
-        OutputTarget.FileSystemType fileSystemType = target.getFileSystemType();
+        DataSourceTarget target = configuration.getOutput().getTarget();
+        DataSourceTarget.FileSystemType fileSystemType = target.getFileSystemType();
         switch (fileSystemType) {
             case LOCAL: {
 
                 // Initialize a local FS instance
                 FileSystem fs = FileSystem.getLocal(new Configuration());
                 log.info("Successfully initialized instance of {}", LocalFileSystem.class.getSimpleName());
-                writeToFileSystem(batch, dataSource, fs);
+                writeToFileSystem(batch, configuration, fs);
                 break;
             } case HDFS: {
 
                 // Set up Hadoop client configuration and initialize a distributed FS instance
                 String hadoopUserName = clientConfiguration.get(HDFSClientConfiguration.USER);
                 System.setProperty("HADOOP_USER_NAME", hadoopUserName);
-                Configuration configuration = new Configuration();
-                configuration.set(FileSystem.FS_DEFAULT_NAME_KEY, clientConfiguration.get(HDFSClientConfiguration.URI));
-                configuration.set("ipc.client.connect.timeout", clientConfiguration.get(HDFSClientConfiguration.CONNECTION_TIMEOUT_MILLIS));
-                configuration.set("ipc.client.connect.max.retries.on.timeouts", clientConfiguration.get(HDFSClientConfiguration.MAX_RETRIES));
-                FileSystem fs = DistributedFileSystem.get(configuration);
+                Configuration hadoopConfiguration = new Configuration();
+                hadoopConfiguration.set(FileSystem.FS_DEFAULT_NAME_KEY, clientConfiguration.get(HDFSClientConfiguration.URI));
+                hadoopConfiguration.set("ipc.client.connect.timeout", clientConfiguration.get(HDFSClientConfiguration.CONNECTION_TIMEOUT_MILLIS));
+                hadoopConfiguration.set("ipc.client.connect.max.retries.on.timeouts", clientConfiguration.get(HDFSClientConfiguration.MAX_RETRIES));
+                FileSystem fs = DistributedFileSystem.get(hadoopConfiguration);
                 log.info("Successfully initialized instance of {}", DistributedFileSystem.class.getSimpleName());
                 UserGroupInformation ugi = UserGroupInformation.createRemoteUser(hadoopUserName);
 
                 // Write data
                 FsOperation fsOperation = ugi.doAs((PrivilegedAction<FsOperation>) () -> {
                     try {
-                        writeToFileSystem(batch, dataSource, fs);
+                        writeToFileSystem(batch, configuration, fs);
                         return new SucceededFsOperation();
                     } catch (Exception e) {
                         return new FailedFsOperation(e);
@@ -93,16 +93,17 @@ public class FileSystemWriter {
     /**
      * Write batch of records on file system
      * @param batch {@link List} of records
+     * @param configuration {@link DataSourceConfiguration}
      * @param fs {@link FileSystem} where data will be saved
      * @param <T> record's type
      * @throws Exception if write operation fails
      */
 
-    private <T> void writeToFileSystem(List<T> batch, BatchDataSource<T> dataSource, FileSystem fs) throws Exception {
+    private <T> void writeToFileSystem(List<T> batch, DataSourceConfiguration<T> configuration, FileSystem fs) throws Exception {
 
-        DataSourceOutput<T> output = dataSource.getConfiguration().getOutput();
-        OutputTarget target = output.getTarget();
-        OutputSerialization<T> serialization = output.getSerialization();
+        DataSourceOutput<T> output = configuration.getOutput();
+        DataSourceTarget target = output.getTarget();
+        DataSourceSerialization<T> serialization = output.getSerialization();
         String targetPathStr = target.getPath();
         Path targetDirectory = new Path(targetPathStr);
         String fsDescription = target.getFileSystemType().getDescription();
@@ -117,29 +118,27 @@ public class FileSystemWriter {
                     targetDirectory, defaultPermissions, fsDescription);
         }
 
-        // Define target file path and open output stream
-        String targetFileName = serialization.getFileNameWithDateAndExtension();
-        Path targetFilePath = new Path(String.join("/", targetPathStr, targetFileName));
-        boolean overwrite = orElse(target.getOverwrite(), Function.identity(), false);
-        FSDataOutputStream fsDataOutputStream = fs.create(targetFilePath, overwrite);
-
-        // Write data depending on states serialization format
-        Class<T> dataClass = dataSource.getConfiguration().getGeneration().getDataClass();
-        DataWriter<T> dataWriter;
+        // Define target file path and setup data writer depending on stated serialization format
+        Path targetFilePath = new Path(String.join("/", targetPathStr, serialization.getFileNameWithDateAndExtension()));
+        Class<T> dataClass = configuration.getGeneration().getDataClass();
+        DataWriter<T, ? extends DataSourceSerialization<T>> dataWriter;
         if (serialization instanceof AvroSerialization) {
             AvroSerialization<T, ? extends SpecificRecord> avroSerialization = (AvroSerialization<T, ? extends SpecificRecord>) serialization;
-            dataWriter = new AvroDataWriter<>(dataClass, avroSerialization.getAvroRecordClass());
+            dataWriter = new AvroDataWriter<>(avroSerialization);
         } else if (serialization instanceof CsvSerialization){
-            dataWriter = new CsvDataWriter<>(dataClass);
+            CsvSerialization<T> csvSerialization = (CsvSerialization<T>) serialization;
+            dataWriter = new CsvDataWriter<>(csvSerialization);
         } else {
             throw new IllegalArgumentException("Unable to find subClass for current instance of "
-                    .concat(OutputSerialization.class.getSimpleName()));
+                    .concat(DataSourceSerialization.class.getSimpleName()));
         }
 
+        // Open output stream and write data
+        FSDataOutputStream fsDataOutputStream = fs.create(targetFilePath, orElse(target.getOverwrite(), Function.identity(), false));
         String serializationFormat = serialization.getFormat().name();
         log.info("Starting to write all of {} instance(s) of {} as .{} file on {} at path {}",
                 batch.size(), dataClass.getSimpleName(), serializationFormat, fsDescription, targetFilePath);
-        dataWriter.write(batch, serialization, fsDataOutputStream);
+        dataWriter.write(batch, fsDataOutputStream);
         log.info("Successfully written all of {} instance(s) of {} as .{} file on {} at path {}",
                 batch.size(), dataClass.getSimpleName(), serializationFormat, fsDescription, targetFilePath);
     }

@@ -1,16 +1,9 @@
 package it.luca.batch.factory.app.service.write;
 
-import it.luca.batch.factory.model.BatchDataSource;
 import it.luca.batch.factory.model.output.AvroSerialization;
-import it.luca.batch.factory.model.output.OutputSerialization;
-import it.luca.batch.factory.model.output.avro.AvroRecordMapper;
-import it.luca.batch.factory.model.output.avro.JavaTypeConversion;
-import lombok.AllArgsConstructor;
-import org.apache.avro.Schema;
+import it.luca.batch.factory.model.output.AvroRecordMapper;
 import org.apache.avro.file.DataFileWriter;
 import org.apache.avro.io.DatumWriter;
-import org.apache.avro.reflect.ReflectData;
-import org.apache.avro.reflect.ReflectDatumWriter;
 import org.apache.avro.specific.SpecificDatumWriter;
 import org.apache.avro.specific.SpecificRecord;
 
@@ -24,23 +17,18 @@ import static it.luca.utils.functional.Stream.map;
  * @param <T> type of data to be written
  */
 
-public class AvroDataWriter<T, R extends SpecificRecord> extends DataWriter<T> {
+public class AvroDataWriter<T, R extends SpecificRecord> extends DataWriter<T, AvroSerialization<T, R>> {
 
-    private final Class<R> avroRecordClass;
-
-    public AvroDataWriter(Class<T> dataClass,
-                          Class<R> avroRecordClass) {
-        super(dataClass);
-        this.avroRecordClass = avroRecordClass;
+    public AvroDataWriter(AvroSerialization<T, R> serialization) {
+        super(serialization);
     }
 
     @Override
-    public void write(List<T> batch, OutputSerialization<T> serialization, OutputStream outputStream) throws Exception {
+    public void write(List<T> batch, OutputStream outputStream) throws Exception {
 
-        AvroSerialization<T, R> avroSerialization = (AvroSerialization<T, R>) serialization;
-        AvroRecordMapper<T, R> avroRecordMapper = avroSerialization.getAvroRecordMapperClass().newInstance();
+        AvroRecordMapper<T, R> avroRecordMapper = serialization.getAvroRecordMapperClass().newInstance();
         List<R> avroRecords = map(batch, avroRecordMapper::map);
-        DatumWriter<R> datumWriter = new SpecificDatumWriter<>(avroRecordClass);
+        DatumWriter<R> datumWriter = new SpecificDatumWriter<>(serialization.getAvroRecordClass());
         DataFileWriter<R> dataFileWriter = new DataFileWriter<>(datumWriter);
         dataFileWriter.create(avroRecords.get(0).getSchema(), outputStream);
         for (R record : avroRecords) {

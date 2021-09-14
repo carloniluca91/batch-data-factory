@@ -7,6 +7,11 @@ import it.luca.data.factory.generator.bean.BeanGenerator;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Subclass of {@link DataSourceGeneration} that generates records relying only on field annotations (annotation-based)
+ * @param <T> type of generated record
+ */
+
 public class StandardGeneration<T> extends DataSourceGeneration<T> {
 
     @SuppressWarnings("unchecked")

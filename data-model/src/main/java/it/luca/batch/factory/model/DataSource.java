@@ -9,9 +9,8 @@ import lombok.Getter;
  * @param <T> type of dataSource's record
  */
 
-
 @Getter
-public class BatchDataSource<T> {
+public class DataSource<T> {
 
     public static final String ID = "id";
     public static final String CONFIGURATION = "configuration";
@@ -20,8 +19,8 @@ public class BatchDataSource<T> {
     private final DataSourceConfiguration<T> configuration;
 
     @JsonCreator
-    public BatchDataSource(@JsonProperty(ID) String id,
-                           @JsonProperty(CONFIGURATION) DataSourceConfiguration<T> configuration) {
+    public DataSource(@JsonProperty(ID) String id,
+                      @JsonProperty(CONFIGURATION) DataSourceConfiguration<T> configuration) {
 
         this.id = id;
         this.configuration = configuration;

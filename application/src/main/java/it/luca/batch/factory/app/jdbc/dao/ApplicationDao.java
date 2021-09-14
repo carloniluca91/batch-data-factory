@@ -1,7 +1,7 @@
 package it.luca.batch.factory.app.jdbc.dao;
 
 import it.luca.batch.factory.app.jdbc.dto.BatchGenerationLogRecord;
-import it.luca.batch.factory.model.BatchDataSource;
+import it.luca.batch.factory.model.DataSource;
 import lombok.extern.slf4j.Slf4j;
 import org.jdbi.v3.core.Jdbi;
 import org.jdbi.v3.postgres.PostgresPlugin;
@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
-import javax.sql.DataSource;
 
 import static it.luca.utils.functional.Optional.isPresent;
 
@@ -19,7 +18,7 @@ import static it.luca.utils.functional.Optional.isPresent;
 public class ApplicationDao {
 
     @Autowired
-    private DataSource dataSource;
+    private javax.sql.DataSource dataSource;
 
     private Jdbi jdbi;
 
@@ -40,11 +39,11 @@ public class ApplicationDao {
 
     /**
      * Save an instance of {@link BatchGenerationLogRecord} for given dataSource to application DB
-     * @param dataSource {@link BatchDataSource}
+     * @param dataSource {@link DataSource}
      * @param exception (potential) {@link Exception} raised by data generation process
      */
 
-    public void saveLogRecordForDataSource(BatchDataSource<?> dataSource, Exception exception) {
+    public void saveLogRecordForDataSource(DataSource<?> dataSource, Exception exception) {
 
         String recordClassName = BatchGenerationLogRecord.class.getSimpleName();
         try {

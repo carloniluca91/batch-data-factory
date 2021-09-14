@@ -2,12 +2,11 @@ package it.luca.batch.factory.model.output;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import it.luca.batch.factory.model.output.avro.AvroRecordMapper;
 import lombok.Getter;
 import org.apache.avro.specific.SpecificRecord;
 
 @Getter
-public class AvroSerialization<T, R extends SpecificRecord> extends OutputSerialization<T> {
+public class AvroSerialization<T, R extends SpecificRecord> extends DataSourceSerialization<T> {
 
     public static final String AVRO_RECORD_CLASS = "avroRecordClass";
     public static final String AVRO_RECORD_MAPPER_CLASS = "avroRecordMapperClass";

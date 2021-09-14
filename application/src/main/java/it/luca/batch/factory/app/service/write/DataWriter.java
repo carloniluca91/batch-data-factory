@@ -1,6 +1,6 @@
 package it.luca.batch.factory.app.service.write;
 
-import it.luca.batch.factory.model.output.OutputSerialization;
+import it.luca.batch.factory.model.output.DataSourceSerialization;
 import lombok.AllArgsConstructor;
 
 import java.io.OutputStream;
@@ -12,9 +12,9 @@ import java.util.List;
  */
 
 @AllArgsConstructor
-public abstract class DataWriter<T> {
-    protected final Class<T> dataClass;
+public abstract class DataWriter<T, D extends DataSourceSerialization<T>> {
 
+    protected final D serialization;
 
     /**
      * Write a batch of records of type T to given {@link OutputStream}
@@ -23,5 +23,5 @@ public abstract class DataWriter<T> {
      * @throws Exception if write operation fails
      */
 
-    public abstract void write(List<T> batch, OutputSerialization<T> dataSource, OutputStream outputStream) throws Exception;
+    public abstract void write(List<T> batch, OutputStream outputStream) throws Exception;
 }

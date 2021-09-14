@@ -10,6 +10,11 @@ import java.util.List;
 
 import static it.luca.utils.functional.Optional.isPresent;
 
+/**
+ * Subclass of {@link DataSourceGeneration} that generates records with a mixed approach (both annotation-based and manual)
+ * @param <T> type of generated records
+ */
+
 @Getter
 public class CustomGeneration<T> extends DataSourceGeneration<T> {
 

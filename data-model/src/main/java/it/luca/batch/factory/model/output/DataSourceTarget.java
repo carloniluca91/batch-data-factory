@@ -6,7 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter
-public class OutputTarget {
+public class DataSourceTarget {
 
     @Getter
     @AllArgsConstructor
@@ -27,9 +27,9 @@ public class OutputTarget {
     private final String path;
 
     @JsonCreator
-    public OutputTarget(@JsonProperty(TYPE) String fileSystemType,
-                        @JsonProperty(OVERWRITE) Boolean overwrite,
-                        @JsonProperty(TARGET_PATH) String path) {
+    public DataSourceTarget(@JsonProperty(TYPE) String fileSystemType,
+                            @JsonProperty(OVERWRITE) Boolean overwrite,
+                            @JsonProperty(TARGET_PATH) String path) {
 
         this.fileSystemType = FileSystemType.valueOf(fileSystemType.toUpperCase());
         this.overwrite = overwrite;

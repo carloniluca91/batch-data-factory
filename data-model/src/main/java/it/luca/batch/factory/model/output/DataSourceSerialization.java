@@ -11,13 +11,13 @@ import static it.luca.utils.time.Supplier.now;
 
 @Getter
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME,
-        property = OutputSerialization.FORMAT,
+        property = DataSourceSerialization.FORMAT,
         visible = true)
 @JsonSubTypes({
-        @JsonSubTypes.Type(value = AvroSerialization.class, name = OutputSerialization.AVRO),
-        @JsonSubTypes.Type(value = CsvSerialization.class, name = OutputSerialization.CSV)
+        @JsonSubTypes.Type(value = AvroSerialization.class, name = DataSourceSerialization.AVRO),
+        @JsonSubTypes.Type(value = CsvSerialization.class, name = DataSourceSerialization.CSV)
 })
-public abstract class OutputSerialization<T> {
+public abstract class DataSourceSerialization<T> {
 
     @Getter
     @AllArgsConstructor
@@ -41,7 +41,7 @@ public abstract class OutputSerialization<T> {
     protected final String fileName;
     protected final String datePattern;
 
-    public OutputSerialization(String format, String fileName, String datePattern) {
+    public DataSourceSerialization(String format, String fileName, String datePattern) {
 
         this.format = SerializationFormat.valueOf(format.toUpperCase());
         this.fileName = fileName;

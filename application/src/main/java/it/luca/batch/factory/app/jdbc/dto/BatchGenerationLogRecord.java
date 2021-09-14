@@ -1,6 +1,6 @@
 package it.luca.batch.factory.app.jdbc.dto;
 
-import it.luca.batch.factory.model.BatchDataSource;
+import it.luca.batch.factory.model.DataSource;
 import it.luca.batch.factory.model.generation.CustomGeneration;
 import it.luca.batch.factory.model.generation.DataSourceGeneration;
 import it.luca.batch.factory.model.output.DataSourceOutput;
@@ -36,7 +36,7 @@ public class BatchGenerationLogRecord {
     private final Timestamp insertTs = Timestamp.valueOf(now());
     private final Date insertDt = Date.valueOf(now().toLocalDate());
 
-    public BatchGenerationLogRecord(BatchDataSource<?> dataSource, Exception exception) {
+    public BatchGenerationLogRecord(DataSource<?> dataSource, Exception exception) {
 
         DataSourceGeneration<?> generation = dataSource.getConfiguration().getGeneration();
         DataSourceOutput<?> output = dataSource.getConfiguration().getOutput();

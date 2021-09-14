@@ -1,6 +1,6 @@
 package it.luca.batch.factory.model.bean.horizon;
 
-import it.luca.batch.factory.model.output.avro.AvroRecordMapper;
+import it.luca.batch.factory.model.output.AvroRecordMapper;
 
 import java.time.format.DateTimeFormatter;
 

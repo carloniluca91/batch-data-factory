@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import it.luca.batch.factory.app.service.ApplicationService;
-import it.luca.batch.factory.model.BatchDataSource;
+import it.luca.batch.factory.model.DataSource;
 import it.luca.batch.factory.model.DataSourcesWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.cli.MissingArgumentException;
@@ -50,7 +50,7 @@ public class Application implements ApplicationRunner {
         log.info("Found {} dataSource(s) to be generated ({})", dataSourceIds.size(), String.join("|", dataSourceIds));
         dataSourceIds.forEach(id -> {
 
-            BatchDataSource<?> dataSource = wrapper.getDataSourceWithId(id);
+            DataSource<?> dataSource = wrapper.getDataSourceWithId(id);
             service.generateBatch(dataSource);
         });
 
