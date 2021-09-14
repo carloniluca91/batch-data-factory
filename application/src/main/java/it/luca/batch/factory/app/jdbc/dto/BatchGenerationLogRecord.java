@@ -26,7 +26,7 @@ public class BatchGenerationLogRecord {
     private final String generationType;
     private final String customGeneratorClass;
     private final Integer batchSize;
-    private final String dataSourceType;
+    private final String serializationFormat;
     private final String fileSystemType;
     private final String fileSystemPath;
     private final String generatedFileName;
@@ -39,7 +39,7 @@ public class BatchGenerationLogRecord {
     public BatchGenerationLogRecord(BatchDataSource<?> dataSource, Exception exception) {
 
         DataSourceGeneration<?> generation = dataSource.getConfiguration().getGeneration();
-        DataSourceOutput output = dataSource.getConfiguration().getOutput();
+        DataSourceOutput<?> output = dataSource.getConfiguration().getOutput();
 
         this.dataSourceId = dataSource.getId();
         this.dataSourceClass = generation.getDataClass().getName();
@@ -49,7 +49,7 @@ public class BatchGenerationLogRecord {
                 null;
 
         this.batchSize = generation.getSize();
-        this.dataSourceType = output.getSerialization().getFormat().name();
+        this.serializationFormat = output.getSerialization().getFormat().name();
         this.fileSystemType = output.getTarget().getFileSystemType().name();
         this.fileSystemPath = output.getTarget().getPath();
         this.generatedFileName = output.getSerialization().getFileNameWithDateAndExtension();
