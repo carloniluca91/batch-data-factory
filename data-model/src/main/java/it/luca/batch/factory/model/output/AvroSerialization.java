@@ -19,7 +19,7 @@ public class AvroSerialization<T, R extends SpecificRecord> extends OutputSerial
                              @JsonProperty(FILE_NAME) String fileName,
                              @JsonProperty(DATE_PATTERN) String datePattern,
                              @JsonProperty("avroRecordClass") String avroRecordClass,
-                             @JsonProperty("avroMapperClass") String avroMapperClass) throws ClassNotFoundException {
+                             @JsonProperty("avroRecordMapperClass") String avroMapperClass) throws ClassNotFoundException {
 
         super(type, fileName, datePattern);
         //this.conversions = conversions;
