@@ -51,7 +51,7 @@ public class Application implements ApplicationRunner {
         dataSourceIds.forEach(id -> {
 
             DataSource<?> dataSource = wrapper.getDataSourceWithId(id);
-            service.generateBatch(dataSource);
+            service.generateAndWriteDataForDataSource(dataSource);
         });
 
         log.info("Exiting main application. Goodbye ;)");

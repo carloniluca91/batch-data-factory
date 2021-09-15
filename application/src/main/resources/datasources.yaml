@@ -8,9 +8,9 @@ dataSources:
         dataClass: it.luca.batch.factory.model.bean.ocs.OcsDailyRecord
       output:
         target:
-          type: LOCAL
+          type: HDFS
           overwrite: true
-          path: C:/Users/Thinkopen/Downloads/ocs_daily
+          path: /user/osboxes/apps/aurora_dataload/datasets/ocs/landing
         serialization:
           format: CSV
           fileName: ocs_daily_yyyyMMdd
@@ -36,8 +36,3 @@ dataSources:
           datePattern: yyyyMMdd
           avroRecordClass: it.luca.batch.factory.model.bean.horizon.HorizonAvroRecord
           avroRecordMapperClass: it.luca.batch.factory.model.bean.horizon.HorizonAvroMapper
-          conversions:
-            -
-              id: LOCAL_DATETIME
-              parameters:
-                pattern: dd/MM/yyyy

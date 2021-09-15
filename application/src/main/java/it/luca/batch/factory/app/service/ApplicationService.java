@@ -27,7 +27,7 @@ public class ApplicationService {
      * @param <T> type of generated data
      */
 
-    public <T> void generateBatch(DataSource<T> dataSource) {
+    public <T> void generateAndWriteDataForDataSource(DataSource<T> dataSource) {
 
         String dataSourceId = dataSource.getId();
         Exception exception = null;
