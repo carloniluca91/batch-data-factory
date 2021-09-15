@@ -1,46 +1,38 @@
 package it.luca.batch.factory.model.generation;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JavaType;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+import it.luca.batch.factory.model.YamlSubTypeParsingTest;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class DataSourceGenerationTest {
-
-    private final ObjectMapper mapper = new ObjectMapper(new YAMLFactory())
-            .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+class DataSourceGenerationTest extends YamlSubTypeParsingTest {
 
     private final JavaType type = mapper.getTypeFactory()
             .constructParametricType(DataSourceGeneration.class, TestBean.class);
 
     private final int SIZE = 500;
 
-    protected String getYamlString(Map<String, Object> yamlObjectMap) {
+    @Override
+    protected Map<String, Object> getCommonObjectMap() {
 
-        return yamlObjectMap.entrySet().stream()
-                .map(entry -> String.format("%s: %s", entry.getKey(), entry.getValue()))
-                .collect(Collectors.joining("\n"));
+        return new HashMap<String, Object>() {{
+            put(DataSourceGeneration.SIZE, SIZE);
+            put(DataSourceGeneration.DATA_CLASS, TestBean.class.getName());
+        }};
     }
 
     @Test
     void deserializeAsCustom() throws JsonProcessingException {
 
-        Map<String, Object> map = new HashMap<String, Object>() {{
-            put(DataSourceGeneration.TYPE, DataSourceGeneration.CUSTOM);
-            put(DataSourceGeneration.SIZE, SIZE);
-            put(DataSourceGeneration.DATA_CLASS, TestBean.class.getName());
-            put(CustomGeneration.GENERATOR_CLASS, TestBeanGenerator.class.getName());
-        }};
-
+        Map<String, Object> map = getCommonObjectMap();
+        map.put(DataSourceGeneration.TYPE, DataSourceGeneration.CUSTOM);
+        map.put(CustomGeneration.GENERATOR_CLASS, TestBeanGenerator.class.getName());
 
         DataSourceGeneration<TestBean> generation = mapper.readValue(getYamlString(map), type);
         assertTrue(generation instanceof CustomGeneration);
@@ -55,11 +47,8 @@ class DataSourceGenerationTest {
     @Test
     void deserializeAsStandard() throws JsonProcessingException {
 
-        Map<String, Object> map = new HashMap<String, Object>() {{
-            put(DataSourceGeneration.TYPE, DataSourceGeneration.STANDARD);
-            put(DataSourceGeneration.SIZE, SIZE);
-            put(DataSourceGeneration.DATA_CLASS, TestBean.class.getName());
-        }};
+        Map<String, Object> map = getCommonObjectMap();
+        map.put(DataSourceGeneration.TYPE, DataSourceGeneration.STANDARD);
 
         DataSourceGeneration<TestBean> generation = mapper.readValue(getYamlString(map), type);
         assertTrue(generation instanceof StandardGeneration);

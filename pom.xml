@@ -74,6 +74,8 @@
                     <configuration>
                         <sourceDirectory>${project.basedir}/src/main/resources/avro/</sourceDirectory>
                         <outputDirectory>${project.basedir}/src/main/java/</outputDirectory>
+                        <testSourceDirectory>${project.basedir}/src/test/resources/avro/</testSourceDirectory>
+                        <testOutputDirectory>${project.basedir}/src/test/java/</testOutputDirectory>
                         <stringType>String</stringType>
                         <fieldVisibility>private</fieldVisibility>
                     </configuration>

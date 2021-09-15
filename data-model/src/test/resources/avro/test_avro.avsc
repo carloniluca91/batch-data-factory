@@ -1,0 +1,8 @@
+{
+  "namespace": "it.luca.batch.factory.model.output",
+  "name": "TestAvroRecord",
+  "type": "record",
+  "fields": [
+    {"name": "data_invio", "type": ["string", "null"]}
+  ]
+}
