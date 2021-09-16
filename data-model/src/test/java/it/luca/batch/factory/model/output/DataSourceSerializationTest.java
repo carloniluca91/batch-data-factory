@@ -56,7 +56,7 @@ class DataSourceSerializationTest extends YamlSubTypeParsingTest {
 
         Map<String, Object> map = getCommonObjectMap();
         map.put(DataSourceSerialization.FORMAT, DataSourceSerialization.CSV);
-        map.put(CsvSerialization.ZIP, true);
+        map.put(CsvSerialization.COMPRESS, true);
         map.put(CsvSerialization.OPTIONS, "\n  ".concat(getYamlString(optionsMap)));
 
         DataSourceSerialization<TestBean> serialization = mapper.readValue(getYamlString(map), type);
@@ -65,7 +65,7 @@ class DataSourceSerializationTest extends YamlSubTypeParsingTest {
         assertTrue(serialization instanceof CsvSerialization);
 
         CsvSerialization<TestBean> csvSerialization = (CsvSerialization<TestBean>) serialization;
-        assertTrue(csvSerialization.getZip());
+        assertTrue(csvSerialization.getCompress());
         assertEquals(csvSerialization.getSeparator(), CsvSerialization.CSVSeparator.PIPE.getSeparator());
     }
 }

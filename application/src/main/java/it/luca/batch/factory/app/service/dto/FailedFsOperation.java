@@ -9,7 +9,6 @@ public class FailedFsOperation extends FsOperation {
 
     public FailedFsOperation(Exception exception) {
 
-        super(FsOperationStatus.FAILED);
         this.exception = exception;
     }
 }

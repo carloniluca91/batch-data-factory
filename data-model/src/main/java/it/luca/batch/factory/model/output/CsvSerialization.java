@@ -23,24 +23,24 @@ public class CsvSerialization<T> extends DataSourceSerialization<T> {
         private final char separator;
     }
 
-    public static final String ZIP = "zip";
-    public static final String ZIP_EXTENSION = ".gz";
+    public static final String COMPRESS = "compress";
+    public static final String COMPRESSION_EXTENSION = ".gz";
     public static final String OPTIONS = "options";
     public static final String SEPARATOR = "separator";
     public static final String HEADER = "header";
     public static final String QUOTE_STRINGS = "quoteStrings";
 
-    private final Boolean zip;
+    private final Boolean compress;
     private final Map<String, String> options;
 
     public CsvSerialization(@JsonProperty(FORMAT) String type,
                             @JsonProperty(FILE_NAME) String fileName,
                             @JsonProperty(DATE_PATTERN) String datePattern,
-                            @JsonProperty(ZIP) Boolean zip,
+                            @JsonProperty(COMPRESS) Boolean compress,
                             @JsonProperty(OPTIONS) Map<String, String> options) {
 
         super(type, fileName, datePattern);
-        this.zip = zip;
+        this.compress = compress;
         this.options = options;
     }
 
@@ -104,6 +104,6 @@ public class CsvSerialization<T> extends DataSourceSerialization<T> {
     public String getFileNameWithDateAndExtension() {
 
         String fileName = super.getFileNameWithDateAndExtension();
-        return zip ? fileName.concat(ZIP_EXTENSION) : fileName;
+        return compress ? fileName.concat(COMPRESSION_EXTENSION) : fileName;
     }
 }

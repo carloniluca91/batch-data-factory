@@ -36,7 +36,7 @@ public class CsvDataWriter<T> extends DataWriter<T, CsvSerialization<T>> {
                 schemaWithSeparatorAndHeader.withoutQuoteChar();
 
         // Create compressed stream if necessary
-        OutputStream stream = serialization.getZip() ?
+        OutputStream stream = serialization.getCompress() ?
                 new GZIPOutputStream(outputStream) :
                 outputStream;
 

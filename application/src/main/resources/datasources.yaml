@@ -15,7 +15,7 @@ dataSources:
           format: CSV
           fileName: ocs_daily_yyyyMMdd
           datePattern: yyyyMMdd
-          zip: true
+          compress: true
           options:
             separator: PIPE
   -
@@ -23,7 +23,7 @@ dataSources:
     configuration:
       generation:
         type: STANDARD
-        size: 10
+        size: 50
         dataClass: it.luca.batch.factory.model.bean.horizon.HorizonRecord
       output:
         target:

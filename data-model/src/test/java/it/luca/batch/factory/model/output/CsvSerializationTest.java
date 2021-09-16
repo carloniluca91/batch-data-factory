@@ -21,8 +21,8 @@ class CsvSerializationTest {
         return new CsvSerialization<>(TYPE, FILE_NAME, DATE_PATTERN, true, map);
     }
 
-    private CsvSerialization<?> getInstance(Boolean zip) {
-        return new CsvSerialization<>(TYPE, FILE_NAME, DATE_PATTERN, zip, new HashMap<>());
+    private CsvSerialization<?> getInstance(Boolean compress) {
+        return new CsvSerialization<>(TYPE, FILE_NAME, DATE_PATTERN, compress, new HashMap<>());
     }
 
     private <T> Map<String, String> initMap(String key, T value, Function<T, String> toString) {
@@ -88,8 +88,8 @@ class CsvSerializationTest {
         Consumer<Boolean> consumer = aBoolean -> {
 
             CsvSerialization<?> instance = getInstance(aBoolean);
-            Consumer<Boolean> assertion = instance.getZip() ? Assertions::assertTrue : Assertions::assertFalse;
-            assertion.accept(instance.getFileNameWithDateAndExtension().endsWith(CsvSerialization.ZIP_EXTENSION));
+            Consumer<Boolean> assertion = instance.getCompress() ? Assertions::assertTrue : Assertions::assertFalse;
+            assertion.accept(instance.getFileNameWithDateAndExtension().endsWith(CsvSerialization.COMPRESSION_EXTENSION));
         };
 
         consumer.accept(true);
