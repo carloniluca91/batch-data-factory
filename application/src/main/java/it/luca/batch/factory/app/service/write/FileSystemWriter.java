@@ -82,7 +82,7 @@ public class FileSystemWriter {
 
                 // Thrown previously caught exception, if any (work around in order to run FS operation)
                 if (fsOperation.isFailure()) {
-                    throw fsOperation.asFailure().getException();
+                    throw ((FailedFsOperation) fsOperation).getException();
                 }
                 break;
             } default: throw new NoSuchElementException(String.format("Unmatched %s: %s",
