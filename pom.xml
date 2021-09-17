@@ -26,7 +26,6 @@
         <module>data-model</module>
     </modules>
 
-
     <profiles>
         <profile>
             <id>dev</id>
@@ -57,7 +56,7 @@
         <hadoop.client.version>3.0.0-cdh6.3.2</hadoop.client.version>
         <jackson.csv.version>2.11.4</jackson.csv.version>
         <java.utils.version>0.3.2</java.utils.version>
-        <data.factory.version>0.3.0</data.factory.version>
+        <data.factory.version>0.4.0</data.factory.version>
 
         <!-- Application properties -->
         <jdbc.url>jdbc:postgresql://localhost:5432/${jdbc.user}?currentSchema=log</jdbc.url>

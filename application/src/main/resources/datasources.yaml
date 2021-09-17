@@ -1,16 +1,17 @@
 dataSources:
   -
-    id: OCS_DAILY
+    id: OCS
     configuration:
       generation:
-        type: STANDARD
-        size: 50
-        dataClass: it.luca.batch.factory.model.bean.ocs.OcsDailyRecord
+        type: CUSTOM
+        size: 100000
+        dataClass: it.luca.batch.factory.model.bean.ocs.OcsRecord
+        generatorClass: it.luca.batch.factory.model.bean.ocs.OcsRecordGenerator
       output:
         target:
-          type: HDFS
+          type: LOCAL
           overwrite: true
-          path: /user/osboxes/apps/aurora_dataload/datasets/ocs/landing
+          path: C:/Users/Thinkopen/Downloads/ocs
         serialization:
           format: CSV
           fileName: ocs_daily_yyyyMMdd
