@@ -8,17 +8,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Subclass of {@link DataSourceGeneration} that generates records relying only on field annotations (annotation-based)
+ * Subclass of {@link Generation} that generates records relying only on field annotations (annotation-based)
  * @param <T> type of generated record
  */
 
-public class StandardGeneration<T> extends DataSourceGeneration<T> {
+public class StandardGeneration<T> extends Generation<T> {
 
     @SuppressWarnings("unchecked")
     @JsonCreator
-    public StandardGeneration(@JsonProperty(DataSourceGeneration.TYPE) String type,
-                              @JsonProperty(DataSourceGeneration.SIZE) Integer size,
-                              @JsonProperty(DataSourceGeneration.DATA_CLASS) String dataClass) throws ClassNotFoundException {
+    public StandardGeneration(@JsonProperty(Generation.TYPE) String type,
+                              @JsonProperty(Generation.SIZE) Integer size,
+                              @JsonProperty(Generation.DATA_CLASS) String dataClass) throws ClassNotFoundException {
 
         super(type, size, (Class<T>) Class.forName(dataClass));
     }

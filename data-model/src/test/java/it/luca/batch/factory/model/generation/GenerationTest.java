@@ -11,10 +11,10 @@ import java.util.Map;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class DataSourceGenerationTest extends YamlSubTypeParsingTest {
+class GenerationTest extends YamlSubTypeParsingTest {
 
     private final JavaType type = mapper.getTypeFactory()
-            .constructParametricType(DataSourceGeneration.class, TestBean.class);
+            .constructParametricType(Generation.class, TestBean.class);
 
     private final int SIZE = 500;
 
@@ -22,8 +22,8 @@ class DataSourceGenerationTest extends YamlSubTypeParsingTest {
     protected Map<String, Object> getCommonObjectMap() {
 
         return new HashMap<String, Object>() {{
-            put(DataSourceGeneration.SIZE, SIZE);
-            put(DataSourceGeneration.DATA_CLASS, TestBean.class.getName());
+            put(Generation.SIZE, SIZE);
+            put(Generation.DATA_CLASS, TestBean.class.getName());
         }};
     }
 
@@ -31,13 +31,13 @@ class DataSourceGenerationTest extends YamlSubTypeParsingTest {
     void deserializeAsCustom() throws JsonProcessingException {
 
         Map<String, Object> map = getCommonObjectMap();
-        map.put(DataSourceGeneration.TYPE, DataSourceGeneration.CUSTOM);
+        map.put(Generation.TYPE, Generation.CUSTOM);
         map.put(CustomGeneration.GENERATOR_CLASS, TestBeanGenerator.class.getName());
 
-        DataSourceGeneration<TestBean> generation = mapper.readValue(getYamlString(map), type);
+        Generation<TestBean> generation = mapper.readValue(getYamlString(map), type);
         assertTrue(generation instanceof CustomGeneration);
         CustomGeneration<TestBean> customGeneration = (CustomGeneration<TestBean>) generation;
-        assertEquals(customGeneration.getType(), DataSourceGeneration.CUSTOM);
+        assertEquals(customGeneration.getType(), Generation.CUSTOM);
         assertEquals(customGeneration.getSize(), SIZE);
         assertEquals(customGeneration.getDataClass(), TestBean.class);
         assertEquals(customGeneration.getDataClass(), TestBean.class);
@@ -48,12 +48,12 @@ class DataSourceGenerationTest extends YamlSubTypeParsingTest {
     void deserializeAsStandard() throws JsonProcessingException {
 
         Map<String, Object> map = getCommonObjectMap();
-        map.put(DataSourceGeneration.TYPE, DataSourceGeneration.STANDARD);
+        map.put(Generation.TYPE, Generation.STANDARD);
 
-        DataSourceGeneration<TestBean> generation = mapper.readValue(getYamlString(map), type);
+        Generation<TestBean> generation = mapper.readValue(getYamlString(map), type);
         assertTrue(generation instanceof StandardGeneration);
         StandardGeneration<TestBean> standardGeneration = (StandardGeneration<TestBean>) generation;
-        assertEquals(standardGeneration.getType(), DataSourceGeneration.STANDARD);
+        assertEquals(standardGeneration.getType(), Generation.STANDARD);
         assertEquals(standardGeneration.getSize(), SIZE);
         assertEquals(standardGeneration.getDataClass(), TestBean.class);
     }

@@ -11,12 +11,12 @@ import java.util.List;
 import static it.luca.utils.functional.Optional.isPresent;
 
 /**
- * Subclass of {@link DataSourceGeneration} that generates records with a mixed approach (both annotation-based and manual)
+ * Subclass of {@link Generation} that generates records with a mixed approach (both annotation-based and manual)
  * @param <T> type of generated records
  */
 
 @Getter
-public class CustomGeneration<T> extends DataSourceGeneration<T> {
+public class CustomGeneration<T> extends Generation<T> {
 
     public static final String GENERATOR_CLASS = "generatorClass";
 
@@ -24,9 +24,9 @@ public class CustomGeneration<T> extends DataSourceGeneration<T> {
 
     @SuppressWarnings("unchecked")
     @JsonCreator
-    public CustomGeneration(@JsonProperty(DataSourceGeneration.TYPE) String type,
-                            @JsonProperty(DataSourceGeneration.SIZE) Integer size,
-                            @JsonProperty(DataSourceGeneration.DATA_CLASS) String dataClass,
+    public CustomGeneration(@JsonProperty(Generation.TYPE) String type,
+                            @JsonProperty(Generation.SIZE) Integer size,
+                            @JsonProperty(Generation.DATA_CLASS) String dataClass,
                             @JsonProperty(GENERATOR_CLASS) String generatorClass) throws ClassNotFoundException {
 
         super(type, size, (Class<T>) Class.forName(dataClass));

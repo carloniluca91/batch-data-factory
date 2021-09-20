@@ -17,13 +17,13 @@ import java.util.List;
 @Getter
 @AllArgsConstructor
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME,
-        property = DataSourceGeneration.TYPE,
+        property = Generation.TYPE,
         visible = true)
 @JsonSubTypes({
-        @JsonSubTypes.Type(value = CustomGeneration.class, name = DataSourceGeneration.CUSTOM),
-        @JsonSubTypes.Type(value = StandardGeneration.class, name = DataSourceGeneration.STANDARD)
+        @JsonSubTypes.Type(value = CustomGeneration.class, name = Generation.CUSTOM),
+        @JsonSubTypes.Type(value = StandardGeneration.class, name = Generation.STANDARD)
 })
-public abstract class DataSourceGeneration<T> {
+public abstract class Generation<T> {
 
     public static final String CUSTOM = "CUSTOM";
     public static final String STANDARD = "STANDARD";

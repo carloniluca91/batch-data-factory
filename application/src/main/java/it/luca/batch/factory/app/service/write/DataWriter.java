@@ -1,6 +1,6 @@
 package it.luca.batch.factory.app.service.write;
 
-import it.luca.batch.factory.model.output.DataSourceSerialization;
+import it.luca.batch.factory.model.output.Serialization;
 import lombok.AllArgsConstructor;
 
 import java.io.OutputStream;
@@ -12,7 +12,7 @@ import java.util.List;
  */
 
 @AllArgsConstructor
-public abstract class DataWriter<T, D extends DataSourceSerialization<T>> {
+public abstract class DataWriter<T, D extends Serialization<T>> {
 
     protected final D serialization;
 

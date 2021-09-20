@@ -47,8 +47,8 @@ public class FileSystemWriter {
 
     public <T> void writeData(List<T> batch, DataSourceConfiguration<T> configuration) throws Exception {
 
-        DataSourceTarget target = configuration.getOutput().getTarget();
-        DataSourceTarget.FileSystemType fileSystemType = target.getFileSystemType();
+        Target target = configuration.getOutput().getTarget();
+        Target.FileSystemType fileSystemType = target.getFileSystemType();
         switch (fileSystemType) {
             case LOCAL: {
 
@@ -101,9 +101,9 @@ public class FileSystemWriter {
 
     private <T> void writeToFileSystem(List<T> batch, DataSourceConfiguration<T> configuration, FileSystem fs) throws Exception {
 
-        DataSourceOutput<T> output = configuration.getOutput();
-        DataSourceTarget target = output.getTarget();
-        DataSourceSerialization<T> serialization = output.getSerialization();
+        Output<T> output = configuration.getOutput();
+        Target target = output.getTarget();
+        Serialization<T> serialization = output.getSerialization();
         String targetPathStr = target.getPath();
         Path targetDirectory = new Path(targetPathStr);
         String fsDescription = target.getFileSystemType().getDescription();
@@ -121,7 +121,7 @@ public class FileSystemWriter {
         // Define target file path and setup data writer depending on stated serialization format
         Path targetFilePath = new Path(String.join("/", targetPathStr, serialization.getFileNameWithDateAndExtension()));
         Class<T> dataClass = configuration.getGeneration().getDataClass();
-        DataWriter<T, ? extends DataSourceSerialization<T>> dataWriter;
+        DataWriter<T, ? extends Serialization<T>> dataWriter;
         if (serialization instanceof AvroSerialization) {
             AvroSerialization<T, ? extends SpecificRecord> avroSerialization = (AvroSerialization<T, ? extends SpecificRecord>) serialization;
             dataWriter = new AvroDataWriter<>(avroSerialization);
@@ -130,7 +130,7 @@ public class FileSystemWriter {
             dataWriter = new CsvDataWriter<>(csvSerialization);
         } else {
             throw new IllegalArgumentException("Unable to find subClass for current instance of "
-                    .concat(DataSourceSerialization.class.getSimpleName()));
+                    .concat(Serialization.class.getSimpleName()));
         }
 
         // Open output stream and write data

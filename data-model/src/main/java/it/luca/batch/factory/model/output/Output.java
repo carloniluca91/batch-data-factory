@@ -9,17 +9,17 @@ import lombok.Getter;
  */
 
 @Getter
-public class DataSourceOutput<T> {
+public class Output<T> {
 
     private static final String TARGET = "target";
     private static final String SERIALIZATION = "serialization";
 
-    private final DataSourceTarget target;
-    private final DataSourceSerialization<T> serialization;
+    private final Target target;
+    private final Serialization<T> serialization;
 
     @JsonCreator
-    public DataSourceOutput(@JsonProperty(TARGET) DataSourceTarget target,
-                            @JsonProperty(SERIALIZATION) DataSourceSerialization<T> serialization) {
+    public Output(@JsonProperty(TARGET) Target target,
+                  @JsonProperty(SERIALIZATION) Serialization<T> serialization) {
 
         this.target = target;
         this.serialization = serialization;

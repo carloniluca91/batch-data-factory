@@ -10,7 +10,7 @@ import java.util.function.Function;
 
 @Slf4j
 @Getter
-public class CsvSerialization<T> extends DataSourceSerialization<T> {
+public class CsvSerialization<T> extends Serialization<T> {
 
     @Getter
     @AllArgsConstructor

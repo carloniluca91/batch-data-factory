@@ -2,8 +2,8 @@ package it.luca.batch.factory.app.jdbc.dto;
 
 import it.luca.batch.factory.model.DataSource;
 import it.luca.batch.factory.model.generation.CustomGeneration;
-import it.luca.batch.factory.model.generation.DataSourceGeneration;
-import it.luca.batch.factory.model.output.DataSourceOutput;
+import it.luca.batch.factory.model.generation.Generation;
+import it.luca.batch.factory.model.output.Output;
 import lombok.Getter;
 
 import java.sql.Date;
@@ -38,8 +38,8 @@ public class BatchGenerationLogRecord {
 
     public BatchGenerationLogRecord(DataSource<?> dataSource, Exception exception) {
 
-        DataSourceGeneration<?> generation = dataSource.getConfiguration().getGeneration();
-        DataSourceOutput<?> output = dataSource.getConfiguration().getOutput();
+        Generation<?> generation = dataSource.getConfiguration().getGeneration();
+        Output<?> output = dataSource.getConfiguration().getOutput();
 
         this.dataSourceId = dataSource.getId();
         this.dataSourceClass = generation.getDataClass().getName();
