@@ -3,3 +3,4 @@ target/*
 *.iml
 application/target/*
 data-model/target/*
+application/src/main/resources/datasources.yaml
