@@ -1,14 +1,14 @@
 package it.luca.batch.factory.app.jdbc.dto;
 
-import it.luca.batch.factory.model.DataSource;
-import it.luca.batch.factory.model.DataSourceConfiguration;
-import it.luca.batch.factory.model.generation.CustomGeneration;
-import it.luca.batch.factory.model.generation.Generation;
-import it.luca.batch.factory.model.generation.StandardGeneration;
-import it.luca.batch.factory.model.output.CsvSerialization;
-import it.luca.batch.factory.model.output.Output;
-import it.luca.batch.factory.model.output.Serialization;
-import it.luca.batch.factory.model.output.Target;
+import it.luca.batch.factory.configuration.DataSource;
+import it.luca.batch.factory.configuration.DataSourceConfiguration;
+import it.luca.batch.factory.configuration.generation.CustomGeneration;
+import it.luca.batch.factory.configuration.generation.Generation;
+import it.luca.batch.factory.configuration.generation.StandardGeneration;
+import it.luca.batch.factory.configuration.output.CsvSerialization;
+import it.luca.batch.factory.configuration.output.Output;
+import it.luca.batch.factory.configuration.output.Serialization;
+import it.luca.batch.factory.configuration.output.Target;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;

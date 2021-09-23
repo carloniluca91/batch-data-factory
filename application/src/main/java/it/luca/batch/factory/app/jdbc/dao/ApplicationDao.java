@@ -1,7 +1,7 @@
 package it.luca.batch.factory.app.jdbc.dao;
 
 import it.luca.batch.factory.app.jdbc.dto.BatchGenerationLogRecord;
-import it.luca.batch.factory.model.DataSource;
+import it.luca.batch.factory.configuration.DataSource;
 import lombok.extern.slf4j.Slf4j;
 import org.jdbi.v3.core.Jdbi;
 import org.jdbi.v3.postgres.PostgresPlugin;

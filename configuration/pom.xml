@@ -10,8 +10,8 @@
         <version>0.2.0</version>
     </parent>
 
-    <artifactId>data-model</artifactId>
-    <version>0.2.0</version>
+    <artifactId>configuration</artifactId>
+    <version>0.1.0</version>
 
     <build>
         <plugins>
@@ -39,11 +39,6 @@
         </dependency>
 
         <dependency>
-            <groupId>com.fasterxml.jackson.datatype</groupId>
-            <artifactId>jackson-datatype-jsr310</artifactId>
-        </dependency>
-
-        <dependency>
             <groupId>com.fasterxml.jackson.dataformat</groupId>
             <artifactId>jackson-dataformat-yaml</artifactId>
         </dependency>
@@ -59,15 +54,10 @@
         </dependency>
 
         <dependency>
-            <groupId>it.luca.batch</groupId>
-            <artifactId>configuration</artifactId>
-            <version>0.1.0</version>
-        </dependency>
-
-        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>
+
 </project>

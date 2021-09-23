@@ -4,8 +4,8 @@ import it.luca.batch.factory.app.configuration.HDFSClientConfiguration;
 import it.luca.batch.factory.app.service.dto.FailedFsOperation;
 import it.luca.batch.factory.app.service.dto.FsOperation;
 import it.luca.batch.factory.app.service.dto.SucceededFsOperation;
-import it.luca.batch.factory.model.DataSourceConfiguration;
-import it.luca.batch.factory.model.output.*;
+import it.luca.batch.factory.configuration.DataSourceConfiguration;
+import it.luca.batch.factory.configuration.output.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.avro.specific.SpecificRecord;
 import org.apache.hadoop.conf.Configuration;
@@ -135,7 +135,7 @@ public class FileSystemWriter {
 
         // Open output stream and write data
         FSDataOutputStream fsDataOutputStream = fs.create(targetFilePath, orElse(target.getOverwrite(), Function.identity(), false));
-        String serializationFormat = serialization.getFormat().name();
+        String serializationFormat = serialization.getFormat().name().toLowerCase();
         log.info("Starting to write all of {} instance(s) of {} as .{} file on {} at path {}",
                 batch.size(), dataClass.getSimpleName(), serializationFormat, fsDescription, targetFilePath);
         dataWriter.write(batch, fsDataOutputStream);

@@ -2,9 +2,9 @@ package it.luca.batch.factory.app.service;
 
 import it.luca.batch.factory.app.jdbc.dao.ApplicationDao;
 import it.luca.batch.factory.app.service.write.FileSystemWriter;
-import it.luca.batch.factory.model.DataSource;
-import it.luca.batch.factory.model.DataSourceConfiguration;
-import it.luca.batch.factory.model.generation.Generation;
+import it.luca.batch.factory.configuration.DataSource;
+import it.luca.batch.factory.configuration.DataSourceConfiguration;
+import it.luca.batch.factory.configuration.generation.Generation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

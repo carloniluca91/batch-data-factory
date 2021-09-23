@@ -13,7 +13,7 @@
 
     <groupId>it.luca.batch</groupId>
     <artifactId>batch-data-factory</artifactId>
-    <version>0.1.0</version>
+    <version>0.2.0</version>
     <packaging>pom</packaging>
     <description>Batch Data Factory - Spring application for generating random test data for batch applications</description>
     <organization>
@@ -23,6 +23,7 @@
 
     <modules>
         <module>application</module>
+        <module>configuration</module>
         <module>data-model</module>
     </modules>
 

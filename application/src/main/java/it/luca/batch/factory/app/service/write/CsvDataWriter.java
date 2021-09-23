@@ -3,7 +3,7 @@ package it.luca.batch.factory.app.service.write;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
-import it.luca.batch.factory.model.output.CsvSerialization;
+import it.luca.batch.factory.configuration.output.CsvSerialization;
 
 import java.io.IOException;
 import java.io.OutputStream;

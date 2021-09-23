@@ -4,8 +4,8 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import it.luca.batch.factory.app.service.ApplicationService;
-import it.luca.batch.factory.model.DataSource;
-import it.luca.batch.factory.model.DataSourcesWrapper;
+import it.luca.batch.factory.configuration.DataSource;
+import it.luca.batch.factory.configuration.DataSourcesWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.cli.MissingArgumentException;
 import org.apache.commons.cli.MissingOptionException;
@@ -47,12 +47,20 @@ public class Application implements ApplicationRunner {
                 .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
                 .readValue(new File(dataSourceYaml), DataSourcesWrapper.class);
 
-        log.info("Found {} dataSource(s) to be generated ({})", dataSourceIds.size(), String.join("|", dataSourceIds));
-        dataSourceIds.forEach(id -> {
+        if (dataSourceIds.size() == 1 && dataSourceIds.get(0).equalsIgnoreCase("ALL")) {
 
-            DataSource<?> dataSource = wrapper.getDataSourceWithId(id);
-            service.generateAndWriteDataForDataSource(dataSource);
-        });
+            List<DataSource<?>> dataSources = wrapper.getDataSources();
+            log.info("Generating random data for all of {} {}(s)", dataSources.size(), DataSource.class.getSimpleName());
+            dataSources.forEach(service::generateAndWriteDataForDataSource);
+
+        } else {
+            log.info("Found {} dataSource(s) to be generated ({})", dataSourceIds.size(), String.join("|", dataSourceIds));
+            dataSourceIds.forEach(id -> {
+
+                DataSource<?> dataSource = wrapper.getDataSourceWithId(id);
+                service.generateAndWriteDataForDataSource(dataSource);
+            });
+        }
 
         log.info("Exiting main application. Goodbye ;)");
     }

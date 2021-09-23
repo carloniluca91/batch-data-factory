@@ -1,6 +1,6 @@
 {
-  "namespace": "it.luca.batch.factory.model.horizon",
-  "name": "HorizonAvroRecord",
+  "namespace": "it.luca.batch.factory.configuration.output",
+  "name": "TestAvroRecord",
   "type": "record",
   "fields": [
     {"name": "data_invio", "type": ["string", "null"]}
