@@ -2,5 +2,6 @@
 target/*
 *.iml
 application/target/*
+configuration/target/*
 data-model/target/*
 application/src/main/resources/datasources.yaml
