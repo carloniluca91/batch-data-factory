@@ -26,6 +26,7 @@ import static it.luca.utils.functional.Optional.isPresent;
 @SpringBootApplication
 public class Application implements ApplicationRunner {
 
+    public static final String ALL = "ALL";
     public static final String DATASOURCE_YAML = "datasource-yaml";
     public static final String ID = "id";
 
@@ -47,7 +48,7 @@ public class Application implements ApplicationRunner {
                 .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
                 .readValue(new File(dataSourceYaml), DataSourcesWrapper.class);
 
-        if (dataSourceIds.size() == 1 && dataSourceIds.get(0).equalsIgnoreCase("ALL")) {
+        if (dataSourceIds.size() == 1 && dataSourceIds.get(0).equalsIgnoreCase(ALL)) {
 
             List<DataSource<?>> dataSources = wrapper.getDataSources();
             log.info("Generating random data for all of {} {}(s)", dataSources.size(), DataSource.class.getSimpleName());

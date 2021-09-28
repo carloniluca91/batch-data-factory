@@ -110,7 +110,7 @@ public class Bancll11Record {
     @JsonProperty("stato_10")
     private String stato10;
 
-    @RandomValue(values = {"FF", "P", ""})
+    @RandomValue(values = {"FF", "P"})
     @JsonProperty("tipo_carnet")
     private String tipoCarnet;
 }
