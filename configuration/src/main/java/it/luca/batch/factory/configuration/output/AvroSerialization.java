@@ -5,6 +5,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import org.apache.avro.specific.SpecificRecord;
 
+import static java.util.Objects.requireNonNull;
+
 @Getter
 public class AvroSerialization<T, R extends SpecificRecord> extends Serialization<T> {
 
@@ -20,10 +22,11 @@ public class AvroSerialization<T, R extends SpecificRecord> extends Serializatio
                              @JsonProperty(FILE_NAME) String fileName,
                              @JsonProperty(DATE_PATTERN) String datePattern,
                              @JsonProperty(AVRO_RECORD_CLASS) String avroRecordClass,
-                             @JsonProperty(AVRO_RECORD_MAPPER_CLASS) String avroMapperClass) throws ClassNotFoundException {
+                             @JsonProperty(AVRO_RECORD_MAPPER_CLASS) String avroRecordMapperClass) throws ClassNotFoundException {
 
         super(type, fileName, datePattern);
-        this.avroRecordClass = (Class<R>) Class.forName(avroRecordClass);
-        this.avroRecordMapperClass = (Class<? extends AvroRecordMapper<T,R>>) Class.forName(avroMapperClass);
+        this.avroRecordClass = (Class<R>) Class.forName(requireNonNull(avroRecordClass, AVRO_RECORD_CLASS));
+        this.avroRecordMapperClass = (Class<? extends AvroRecordMapper<T,R>>) Class.forName(
+                requireNonNull(avroRecordMapperClass, AVRO_RECORD_MAPPER_CLASS));
     }
 }

@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 
+import static java.util.Objects.requireNonNull;
+
 /**
  * Bean containing all information about a batch dataSource
  * @param <T> type of dataSource's record
@@ -22,7 +24,7 @@ public class DataSource<T> {
     public DataSource(@JsonProperty(ID) String id,
                       @JsonProperty(CONFIGURATION) DataSourceConfiguration<T> configuration) {
 
-        this.id = id;
-        this.configuration = configuration;
+        this.id = requireNonNull(id, ID);
+        this.configuration = requireNonNull(configuration, CONFIGURATION);
     }
 }

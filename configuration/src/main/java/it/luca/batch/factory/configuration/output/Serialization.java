@@ -8,6 +8,7 @@ import lombok.Getter;
 import java.time.format.DateTimeFormatter;
 
 import static it.luca.utils.time.Supplier.now;
+import static java.util.Objects.requireNonNull;
 
 @Getter
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME,
@@ -45,9 +46,9 @@ public abstract class Serialization<T> {
 
     public Serialization(String format, String fileName, String datePattern) {
 
-        this.format = SerializationFormat.valueOf(format.toUpperCase());
-        this.fileName = fileName;
-        this.datePattern = datePattern;
+        this.format = SerializationFormat.valueOf(requireNonNull(format, FORMAT).toUpperCase());
+        this.fileName = requireNonNull(fileName, FILE_NAME);
+        this.datePattern = requireNonNull(datePattern, DATE_PATTERN);
     }
 
     /**

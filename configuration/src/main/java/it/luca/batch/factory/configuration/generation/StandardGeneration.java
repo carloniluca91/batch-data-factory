@@ -14,13 +14,12 @@ import java.util.List;
 
 public class StandardGeneration<T> extends Generation<T> {
 
-    @SuppressWarnings("unchecked")
     @JsonCreator
     public StandardGeneration(@JsonProperty(Generation.TYPE) String type,
                               @JsonProperty(Generation.SIZE) Integer size,
                               @JsonProperty(Generation.DATA_CLASS) String dataClass) throws ClassNotFoundException {
 
-        super(type, size, (Class<T>) Class.forName(dataClass));
+        super(type, size, dataClass);
     }
 
     @Override

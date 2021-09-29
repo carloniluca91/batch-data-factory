@@ -5,6 +5,11 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+import java.util.function.Function;
+
+import static it.luca.utils.functional.Optional.orElse;
+import static java.util.Objects.requireNonNull;
+
 @Getter
 public class Target {
 
@@ -31,8 +36,8 @@ public class Target {
                   @JsonProperty(OVERWRITE) Boolean overwrite,
                   @JsonProperty(TARGET_PATH) String path) {
 
-        this.fileSystemType = FileSystemType.valueOf(fileSystemType.toUpperCase());
-        this.overwrite = overwrite;
-        this.path = path;
+        this.fileSystemType = FileSystemType.valueOf(requireNonNull(fileSystemType, TYPE).toUpperCase());
+        this.overwrite = orElse(overwrite, Function.identity(), true);
+        this.path = requireNonNull(path, TARGET_PATH);
     }
 }

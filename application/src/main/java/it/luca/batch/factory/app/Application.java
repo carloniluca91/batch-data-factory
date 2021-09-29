@@ -2,7 +2,6 @@ package it.luca.batch.factory.app;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import it.luca.batch.factory.app.service.ApplicationService;
 import it.luca.batch.factory.configuration.DataSource;
 import it.luca.batch.factory.configuration.DataSourcesWrapper;
@@ -27,7 +26,7 @@ import static it.luca.utils.functional.Optional.isPresent;
 public class Application implements ApplicationRunner {
 
     public static final String ALL = "ALL";
-    public static final String DATASOURCE_YAML = "datasource-yaml";
+    public static final String DATASOURCE_JSON = "datasource-json";
     public static final String ID = "id";
 
     @Autowired
@@ -42,9 +41,9 @@ public class Application implements ApplicationRunner {
     @Override
     public void run(ApplicationArguments args) throws MissingOptionException, MissingArgumentException, IOException {
 
-        String dataSourceYaml = getValueOfOption(args, DATASOURCE_YAML).get(0);
+        String dataSourceYaml = getValueOfOption(args, DATASOURCE_JSON).get(0);
         List<String> dataSourceIds = getValueOfOption(args, ID);
-        DataSourcesWrapper wrapper = new ObjectMapper(new YAMLFactory())
+        DataSourcesWrapper wrapper = new ObjectMapper()
                 .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
                 .readValue(new File(dataSourceYaml), DataSourcesWrapper.class);
 

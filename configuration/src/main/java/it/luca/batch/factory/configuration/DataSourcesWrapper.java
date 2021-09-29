@@ -5,9 +5,9 @@ import lombok.Getter;
 
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.Objects;
 
 import static it.luca.utils.functional.Stream.filter;
+import static java.util.Objects.requireNonNull;
 
 public class DataSourcesWrapper {
 
@@ -18,7 +18,7 @@ public class DataSourcesWrapper {
 
     public DataSourcesWrapper(@JsonProperty(DATA_SOURCES) List<DataSource<?>> dataSources) {
 
-        this.dataSources = Objects.requireNonNull(dataSources, DATA_SOURCES);
+        this.dataSources = requireNonNull(dataSources, DATA_SOURCES);
     }
 
     public DataSource<?> getDataSourceWithId(String id) {

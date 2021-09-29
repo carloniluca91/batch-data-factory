@@ -8,6 +8,9 @@ import lombok.extern.slf4j.Slf4j;
 import java.util.Map;
 import java.util.function.Function;
 
+import static it.luca.utils.functional.Optional.orElse;
+import static java.util.Objects.requireNonNull;
+
 @Slf4j
 @Getter
 public class CsvSerialization<T> extends Serialization<T> {
@@ -40,8 +43,8 @@ public class CsvSerialization<T> extends Serialization<T> {
                             @JsonProperty(OPTIONS) Map<String, String> options) {
 
         super(type, fileName, datePattern);
-        this.compress = compress;
-        this.options = options;
+        this.compress = orElse(compress, Function.identity(), true);
+        this.options = requireNonNull(options, OPTIONS);
     }
 
     /**

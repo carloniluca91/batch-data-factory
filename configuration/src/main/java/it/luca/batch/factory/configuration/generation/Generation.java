@@ -2,11 +2,12 @@ package it.luca.batch.factory.configuration.generation;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
+
+import static java.util.Objects.requireNonNull;
 
 /**
  * Configuration for dataSource's record generation
@@ -15,7 +16,6 @@ import java.util.List;
 
 @Slf4j
 @Getter
-@AllArgsConstructor
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME,
         property = Generation.TYPE,
         visible = true)
@@ -35,6 +35,14 @@ public abstract class Generation<T> {
     protected final String type;
     protected final Integer size;
     protected final Class<T> dataClass;
+
+    @SuppressWarnings("unchecked")
+    public Generation(String type, Integer size, String dataClass) throws ClassNotFoundException {
+
+        this.type = requireNonNull(type, TYPE);
+        this.size = requireNonNull(size, SIZE);
+        this.dataClass = (Class<T>) Class.forName(requireNonNull(dataClass, DATA_CLASS));
+    }
 
     /**
      * Generate a batch of random data of type T

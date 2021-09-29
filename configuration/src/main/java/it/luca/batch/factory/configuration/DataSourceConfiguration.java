@@ -6,6 +6,8 @@ import it.luca.batch.factory.configuration.generation.Generation;
 import it.luca.batch.factory.configuration.output.Output;
 import lombok.Getter;
 
+import static java.util.Objects.requireNonNull;
+
 /**
  * Configuration of a batch dataSource
  * @param <T> type of dataSource's record
@@ -24,7 +26,7 @@ public class DataSourceConfiguration<T> {
     public DataSourceConfiguration(@JsonProperty(GENERATION) Generation<T> generation,
                                    @JsonProperty(OUTPUT) Output<T> output) {
 
-        this.generation = generation;
-        this.output = output;
+        this.generation = requireNonNull(generation, GENERATION);
+        this.output = requireNonNull(output, OUTPUT);
     }
 }

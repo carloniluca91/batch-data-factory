@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static it.luca.utils.functional.Optional.isPresent;
+import static java.util.Objects.requireNonNull;
 
 /**
  * Subclass of {@link Generation} that generates records with a mixed approach (both annotation-based and manual)
@@ -22,15 +23,15 @@ public class CustomGeneration<T> extends Generation<T> {
 
     private final Class<? extends CustomGenerator<T>> generatorClass;
 
-    @SuppressWarnings("unchecked")
     @JsonCreator
+    @SuppressWarnings("unchecked")
     public CustomGeneration(@JsonProperty(Generation.TYPE) String type,
                             @JsonProperty(Generation.SIZE) Integer size,
                             @JsonProperty(Generation.DATA_CLASS) String dataClass,
                             @JsonProperty(GENERATOR_CLASS) String generatorClass) throws ClassNotFoundException {
 
-        super(type, size, (Class<T>) Class.forName(dataClass));
-        this.generatorClass = (Class<? extends CustomGenerator<T>>) Class.forName(generatorClass);
+        super(type, size, dataClass);
+        this.generatorClass = (Class<? extends CustomGenerator<T>>) Class.forName(requireNonNull(generatorClass, GENERATOR_CLASS));
     }
 
     @Override
