@@ -41,11 +41,11 @@ public class Application implements ApplicationRunner {
     @Override
     public void run(ApplicationArguments args) throws MissingOptionException, MissingArgumentException, IOException {
 
-        String dataSourceYaml = getValueOfOption(args, DATASOURCE_JSON).get(0);
+        String dataSourceJson = getValueOfOption(args, DATASOURCE_JSON).get(0);
         List<String> dataSourceIds = getValueOfOption(args, ID);
         DataSourcesWrapper wrapper = new ObjectMapper()
                 .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-                .readValue(new File(dataSourceYaml), DataSourcesWrapper.class);
+                .readValue(new File(dataSourceJson), DataSourcesWrapper.class);
 
         if (dataSourceIds.size() == 1 && dataSourceIds.get(0).equalsIgnoreCase(ALL)) {
 

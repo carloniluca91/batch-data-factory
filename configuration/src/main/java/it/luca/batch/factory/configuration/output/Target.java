@@ -25,7 +25,7 @@ public class Target {
 
     public final static String TYPE = "type";
     public final static String OVERWRITE = "overwrite";
-    public final static String TARGET_PATH = "targetPath";
+    public final static String PATH = "path";
 
     private final FileSystemType fileSystemType;
     private final Boolean overwrite;
@@ -34,10 +34,10 @@ public class Target {
     @JsonCreator
     public Target(@JsonProperty(TYPE) String fileSystemType,
                   @JsonProperty(OVERWRITE) Boolean overwrite,
-                  @JsonProperty(TARGET_PATH) String path) {
+                  @JsonProperty(PATH) String path) {
 
         this.fileSystemType = FileSystemType.valueOf(requireNonNull(fileSystemType, TYPE).toUpperCase());
         this.overwrite = orElse(overwrite, Function.identity(), true);
-        this.path = requireNonNull(path, TARGET_PATH);
+        this.path = requireNonNull(path, PATH);
     }
 }

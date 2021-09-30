@@ -11,6 +11,8 @@ import it.luca.batch.factory.configuration.output.Serialization;
 import it.luca.batch.factory.configuration.output.Target;
 import org.junit.jupiter.api.Test;
 
+import java.util.HashMap;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class BatchGenerationLogRecordTest {
@@ -26,7 +28,7 @@ class BatchGenerationLogRecordTest {
     private final String FILE_SYSTEM_TYPE = Target.FileSystemType.LOCAL.name();
 
     private final CsvSerialization<TestBean> SERIALIZATION = new CsvSerialization<>(SERIALIZATION_FORMAT,
-            FILE_NAME, DATE_PATTERN, false, null);
+            FILE_NAME, DATE_PATTERN, false, new HashMap<>());
 
     private final Target TARGET = new Target(FILE_SYSTEM_TYPE, false, OUTPUT_PATH);
     private final Output<TestBean> OUTPUT = new Output<>(TARGET, SERIALIZATION);
