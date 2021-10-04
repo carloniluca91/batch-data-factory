@@ -11,6 +11,8 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 
+import java.time.LocalDateTime;
+
 import static it.luca.utils.functional.Optional.isPresent;
 
 @Slf4j
@@ -40,16 +42,17 @@ public class ApplicationDao {
     /**
      * Save an instance of {@link BatchGenerationLogRecord} for given dataSource to application DB
      * @param dataSource {@link DataSource}
+     * @param startTime start time of batch generation process
      * @param exception (potential) {@link Exception} raised by data generation process
      */
 
-    public void saveLogRecordForDataSource(DataSource<?> dataSource, Exception exception) {
+    public void saveLogRecordForDataSource(DataSource<?> dataSource, LocalDateTime startTime, Exception exception) {
 
         String recordClassName = BatchGenerationLogRecord.class.getSimpleName();
         try {
             if (isPresent(jdbi)) {
                 log.info("Saving current instance of {}", recordClassName);
-                BatchGenerationLogRecord record = new BatchGenerationLogRecord(dataSource, exception);
+                BatchGenerationLogRecord record = new BatchGenerationLogRecord(dataSource, startTime, exception);
                 jdbi.useHandle(handle -> handle.attach(BatchGenerationLogRecordDao.class).save(record));
                 log.info("Successfully saved current instance of {}", recordClassName);
             } else {

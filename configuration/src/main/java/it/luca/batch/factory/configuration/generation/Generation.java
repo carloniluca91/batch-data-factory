@@ -33,15 +33,25 @@ public abstract class Generation<T> {
     public static final String DATA_CLASS = "dataClass";
 
     protected final String type;
-    protected final Integer size;
+    protected final SizeType size;
     protected final Class<T> dataClass;
 
     @SuppressWarnings("unchecked")
-    public Generation(String type, Integer size, String dataClass) throws ClassNotFoundException {
+    public Generation(String type, SizeType size, String dataClass) throws ClassNotFoundException {
 
         this.type = requireNonNull(type, TYPE);
         this.size = requireNonNull(size, SIZE);
         this.dataClass = (Class<T>) Class.forName(requireNonNull(dataClass, DATA_CLASS));
+    }
+
+    /**
+     * Shortcut for getting actual batch size from {@link SizeType instance}
+     * @return size of generated batch
+     */
+
+    public int getBatchSize() {
+
+        return size.getBatchSize();
     }
 
     /**
@@ -53,6 +63,7 @@ public abstract class Generation<T> {
     public List<T> getBatch() throws Exception {
 
         String dataClassName = dataClass.getSimpleName();
+        int size = this.size.getBatchSize();
         log.info("Starting to generate {} instance(s) of {} ({})", size, dataClassName, type);
         List<T> batch = createBatch();
         log.info("Successfully generated all of {} instance(s) of {} ({})", size, dataClassName, type);

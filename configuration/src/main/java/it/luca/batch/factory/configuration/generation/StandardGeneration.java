@@ -16,17 +16,17 @@ public class StandardGeneration<T> extends Generation<T> {
 
     @JsonCreator
     public StandardGeneration(@JsonProperty(Generation.TYPE) String type,
-                              @JsonProperty(Generation.SIZE) Integer size,
+                              @JsonProperty(Generation.SIZE) SizeType sizeType,
                               @JsonProperty(Generation.DATA_CLASS) String dataClass) throws ClassNotFoundException {
 
-        super(type, size, dataClass);
+        super(type, sizeType, dataClass);
     }
 
     @Override
     protected List<T> createBatch() throws Exception {
 
         List<T> batch = new ArrayList<>();
-        for (int i=0; i < size; i++) {
+        for (int i=0; i < getBatchSize(); i++) {
             batch.add(BeanGenerator.generate(dataClass));
         }
 

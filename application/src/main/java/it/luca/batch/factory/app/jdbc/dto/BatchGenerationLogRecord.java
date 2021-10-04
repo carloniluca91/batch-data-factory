@@ -8,10 +8,15 @@ import lombok.Getter;
 
 import java.sql.Date;
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 import static it.luca.utils.functional.Optional.isPresent;
 import static it.luca.utils.functional.Optional.orNull;
 import static it.luca.utils.time.Supplier.now;
+
+/**
+ * Bean representing log record to be inserted on application db
+ */
 
 @Getter
 public class BatchGenerationLogRecord {
@@ -19,13 +24,14 @@ public class BatchGenerationLogRecord {
     public static final String OK = "OK";
     public static final String KO = "KO";
 
-    private final Timestamp eventTs = Timestamp.valueOf(now());
-    private final Date eventDt = Date.valueOf(now().toLocalDate());
+    private final Timestamp generationStartTime;
+    private final Date generationStartDate;
     private final String dataSourceId;
     private final String dataSourceClass;
     private final String generationType;
     private final String customGeneratorClass;
-    private final Integer batchSize;
+    private final String batchSizeType;
+    private final Integer batchSizeValue;
     private final String serializationFormat;
     private final String fileSystemType;
     private final String fileSystemPath;
@@ -37,10 +43,16 @@ public class BatchGenerationLogRecord {
     private final Date insertDt = Date.valueOf(now().toLocalDate());
 
     public BatchGenerationLogRecord(DataSource<?> dataSource, Exception exception) {
+        this(dataSource, LocalDateTime.now(), exception);
+    }
+
+    public BatchGenerationLogRecord(DataSource<?> dataSource, LocalDateTime startTime, Exception exception) {
 
         Generation<?> generation = dataSource.getConfiguration().getGeneration();
         Output<?> output = dataSource.getConfiguration().getOutput();
 
+        this.generationStartTime = Timestamp.valueOf(startTime);
+        this.generationStartDate = Date.valueOf(startTime.toLocalDate());
         this.dataSourceId = dataSource.getId();
         this.dataSourceClass = generation.getDataClass().getName();
         this.generationType = generation.getType();
@@ -48,7 +60,8 @@ public class BatchGenerationLogRecord {
                 orNull(((CustomGeneration<?>) generation).getGeneratorClass(), Class::getName) :
                 null;
 
-        this.batchSize = generation.getSize();
+        this.batchSizeType = generation.getSize().getType();
+        this.batchSizeValue = generation.getBatchSize();
         this.serializationFormat = output.getSerialization().getFormat().name();
         this.fileSystemType = output.getTarget().getFileSystemType().name();
         this.fileSystemPath = output.getTarget().getPath();

@@ -2,7 +2,7 @@ package it.luca.batch.factory.configuration.output;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JavaType;
-import it.luca.batch.factory.configuration.YamlSubTypeParsingTest;
+import it.luca.batch.factory.configuration.JsonSubTypeParsingTest;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
@@ -11,7 +11,7 @@ import java.util.Map;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class SerializationTest extends YamlSubTypeParsingTest {
+class SerializationTest extends JsonSubTypeParsingTest {
 
     private final JavaType type = mapper.getTypeFactory()
             .constructParametricType(Serialization.class, TestBean.class);
@@ -36,7 +36,7 @@ class SerializationTest extends YamlSubTypeParsingTest {
         map.put(AvroSerialization.AVRO_RECORD_CLASS, TestAvroRecord.class.getName());
         map.put(AvroSerialization.AVRO_RECORD_MAPPER_CLASS, TestAvroRecordMapper.class.getName());
 
-        Serialization<TestBean> serialization = mapper.readValue(getYamlString(map), type);
+        Serialization<TestBean> serialization = mapper.readValue(mapToJsonString(map), type);
         assertEquals(FILE_NAME, serialization.getFileName());
         assertEquals(DATE_PATTERN, serialization.getDatePattern());
         assertTrue(serialization instanceof AvroSerialization);
@@ -57,9 +57,9 @@ class SerializationTest extends YamlSubTypeParsingTest {
         Map<String, Object> map = getCommonObjectMap();
         map.put(Serialization.FORMAT, Serialization.CSV);
         map.put(CsvSerialization.COMPRESS, true);
-        map.put(CsvSerialization.OPTIONS, "\n  ".concat(getYamlString(optionsMap)));
+        map.put(CsvSerialization.OPTIONS, optionsMap);
 
-        Serialization<TestBean> serialization = mapper.readValue(getYamlString(map), type);
+        Serialization<TestBean> serialization = mapper.readValue(mapToJsonString(map), type);
         assertEquals(FILE_NAME, serialization.getFileName());
         assertEquals(DATE_PATTERN, serialization.getDatePattern());
         assertTrue(serialization instanceof CsvSerialization);

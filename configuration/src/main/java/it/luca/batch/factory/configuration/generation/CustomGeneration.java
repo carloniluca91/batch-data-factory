@@ -26,11 +26,11 @@ public class CustomGeneration<T> extends Generation<T> {
     @JsonCreator
     @SuppressWarnings("unchecked")
     public CustomGeneration(@JsonProperty(Generation.TYPE) String type,
-                            @JsonProperty(Generation.SIZE) Integer size,
+                            @JsonProperty(Generation.SIZE) SizeType sizeType,
                             @JsonProperty(Generation.DATA_CLASS) String dataClass,
                             @JsonProperty(GENERATOR_CLASS) String generatorClass) throws ClassNotFoundException {
 
-        super(type, size, dataClass);
+        super(type, sizeType, dataClass);
         this.generatorClass = (Class<? extends CustomGenerator<T>>) Class.forName(requireNonNull(generatorClass, GENERATOR_CLASS));
     }
 
@@ -44,7 +44,7 @@ public class CustomGeneration<T> extends Generation<T> {
 
         List<T> batch = new ArrayList<>();
         CustomGenerator<T> generator = generatorClass.newInstance();
-        for (int i=0; i < size; i++) {
+        for (int i=0; i < getBatchSize(); i++) {
             batch.add(generator.generate(dataClass));
         }
 

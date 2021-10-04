@@ -9,7 +9,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
 import java.util.List;
+
+import static it.luca.utils.time.Supplier.now;
 
 @Slf4j
 @Component
@@ -31,6 +34,7 @@ public class ApplicationService {
 
         String dataSourceId = dataSource.getId();
         Exception exception = null;
+        LocalDateTime generationStartTime = now();
         log.info("Starting to generate data for dataSource {}", dataSourceId);
         try {
 
@@ -45,6 +49,6 @@ public class ApplicationService {
             exception = e;
         }
 
-        dao.saveLogRecordForDataSource(dataSource, exception);
+        dao.saveLogRecordForDataSource(dataSource, generationStartTime, exception);
     }
 }
