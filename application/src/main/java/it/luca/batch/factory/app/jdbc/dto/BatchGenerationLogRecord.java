@@ -12,7 +12,6 @@ import java.time.LocalDateTime;
 
 import static it.luca.utils.functional.Optional.isPresent;
 import static it.luca.utils.functional.Optional.orNull;
-import static it.luca.utils.time.Supplier.now;
 
 /**
  * Bean representing log record to be inserted on application db
@@ -39,8 +38,6 @@ public class BatchGenerationLogRecord {
     private final String sampleGenerationCode;
     private final String exceptionClass;
     private final String exceptionMessage;
-    private final Timestamp insertTs = Timestamp.valueOf(now());
-    private final Date insertDt = Date.valueOf(now().toLocalDate());
 
     public BatchGenerationLogRecord(DataSource<?> dataSource, Exception exception) {
         this(LocalDateTime.now(), dataSource, exception);
