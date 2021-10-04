@@ -41,18 +41,18 @@ public class ApplicationDao {
 
     /**
      * Save an instance of {@link BatchGenerationLogRecord} for given dataSource to application DB
-     * @param dataSource {@link DataSource}
      * @param startTime start time of batch generation process
+     * @param dataSource {@link DataSource}
      * @param exception (potential) {@link Exception} raised by data generation process
      */
 
-    public void saveLogRecordForDataSource(DataSource<?> dataSource, LocalDateTime startTime, Exception exception) {
+    public void saveLogRecordForDataSource(LocalDateTime startTime, DataSource<?> dataSource, Exception exception) {
 
         String recordClassName = BatchGenerationLogRecord.class.getSimpleName();
         try {
             if (isPresent(jdbi)) {
                 log.info("Saving current instance of {}", recordClassName);
-                BatchGenerationLogRecord record = new BatchGenerationLogRecord(dataSource, startTime, exception);
+                BatchGenerationLogRecord record = new BatchGenerationLogRecord(startTime, dataSource, exception);
                 jdbi.useHandle(handle -> handle.attach(BatchGenerationLogRecordDao.class).save(record));
                 log.info("Successfully saved current instance of {}", recordClassName);
             } else {

@@ -39,8 +39,7 @@ public abstract class SizeType {
      * @throws IllegalArgumentException if number validation fails
      */
 
-    public static int validate(Integer number, String fieldName)
-            throws IllegalArgumentException {
+    public static int validate(Integer number, String fieldName) {
 
         if (requireNonNull(number, fieldName) != 0) {
             return number;

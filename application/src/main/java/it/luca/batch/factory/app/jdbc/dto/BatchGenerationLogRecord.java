@@ -43,10 +43,10 @@ public class BatchGenerationLogRecord {
     private final Date insertDt = Date.valueOf(now().toLocalDate());
 
     public BatchGenerationLogRecord(DataSource<?> dataSource, Exception exception) {
-        this(dataSource, LocalDateTime.now(), exception);
+        this(LocalDateTime.now(), dataSource, exception);
     }
 
-    public BatchGenerationLogRecord(DataSource<?> dataSource, LocalDateTime startTime, Exception exception) {
+    public BatchGenerationLogRecord(LocalDateTime startTime, DataSource<?> dataSource, Exception exception) {
 
         Generation<?> generation = dataSource.getConfiguration().getGeneration();
         Output<?> output = dataSource.getConfiguration().getOutput();

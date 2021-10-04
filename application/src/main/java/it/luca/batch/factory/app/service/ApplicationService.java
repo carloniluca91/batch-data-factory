@@ -49,6 +49,6 @@ public class ApplicationService {
             exception = e;
         }
 
-        dao.saveLogRecordForDataSource(dataSource, generationStartTime, exception);
+        dao.saveLogRecordForDataSource(generationStartTime, dataSource, exception);
     }
 }
