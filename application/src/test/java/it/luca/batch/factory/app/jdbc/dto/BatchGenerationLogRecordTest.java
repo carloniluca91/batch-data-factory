@@ -9,8 +9,12 @@ import it.luca.batch.factory.configuration.output.Serialization;
 import it.luca.batch.factory.configuration.output.Target;
 import org.junit.jupiter.api.Test;
 
+import java.sql.Date;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 
+import static it.luca.utils.time.Supplier.now;
 import static org.junit.jupiter.api.Assertions.*;
 
 class BatchGenerationLogRecordTest {
@@ -20,6 +24,9 @@ class BatchGenerationLogRecordTest {
     private final String OUTPUT_PATH = "/target/path";
     private final String DATE_PATTERN = "dd_MM_yyyy";
     private final String FILE_NAME = "file_name_".concat(DATE_PATTERN);
+
+    private final int DURATION_IN_MINUTES = 6;
+    private final LocalDateTime START_TIME = now().minusMinutes(DURATION_IN_MINUTES);
 
     private final String SERIALIZATION_FORMAT = Serialization.CSV;
     private final String FILE_SYSTEM_TYPE = Target.FileSystemType.LOCAL.name();
@@ -40,9 +47,12 @@ class BatchGenerationLogRecordTest {
         StandardGeneration<TestBean> standardGeneration = new StandardGeneration<>(Generation.STANDARD, SIZE_TYPE, DATA_CLASS);
         DataSourceConfiguration<TestBean> configuration = new DataSourceConfiguration<>(standardGeneration, OUTPUT);
         DataSource<TestBean> dataSource = new DataSource<>(ID, configuration);
-        BatchGenerationLogRecord record = new BatchGenerationLogRecord(dataSource, null);
+        BatchGenerationLogRecord record = new BatchGenerationLogRecord(START_TIME, dataSource,null);
 
         // Assertions
+        assertEquals(Timestamp.valueOf(START_TIME), record.getGenerationStartTime());
+        assertEquals(Date.valueOf(START_TIME.toLocalDate()), record.getGenerationStartDate());
+        assertEquals(DURATION_IN_MINUTES, record.getGenerationDurationInMinutes());
         assertEquals(ID, record.getDataSourceId());
         assertEquals(DATA_CLASS, record.getDataSourceClass());
         assertEquals(Generation.STANDARD, record.getGenerationType());
@@ -66,7 +76,7 @@ class BatchGenerationLogRecordTest {
         CustomGeneration<TestBean> customGeneration = new CustomGeneration<>(Generation.CUSTOM, SIZE_TYPE, DATA_CLASS, GENERATOR_CLASS);
         DataSourceConfiguration<TestBean> configuration = new DataSourceConfiguration<>(customGeneration, OUTPUT);
         DataSource<TestBean> dataSource = new DataSource<>(ID, configuration);
-        BatchGenerationLogRecord record = new BatchGenerationLogRecord(dataSource, null);
+        BatchGenerationLogRecord record = new BatchGenerationLogRecord(START_TIME, dataSource, null);
 
         // Assertions
         assertNotNull(record.getCustomGeneratorClass());
@@ -84,7 +94,7 @@ class BatchGenerationLogRecordTest {
         IllegalArgumentException exception = new IllegalArgumentException(EXCEPTION_MSG);
         DataSourceConfiguration<TestBean> configuration = new DataSourceConfiguration<>(standardGeneration, OUTPUT);
         DataSource<TestBean> dataSource = new DataSource<>(ID, configuration);
-        BatchGenerationLogRecord record = new BatchGenerationLogRecord(dataSource, exception);
+        BatchGenerationLogRecord record = new BatchGenerationLogRecord(START_TIME, dataSource, exception);
 
         // Assertions
         assertNotNull(record.getExceptionClass());

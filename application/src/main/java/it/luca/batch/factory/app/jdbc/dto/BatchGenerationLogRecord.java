@@ -9,9 +9,11 @@ import lombok.Getter;
 import java.sql.Date;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 
 import static it.luca.utils.functional.Optional.isPresent;
 import static it.luca.utils.functional.Optional.orNull;
+import static it.luca.utils.time.Supplier.now;
 
 /**
  * Bean representing log record to be inserted on application db
@@ -25,6 +27,9 @@ public class BatchGenerationLogRecord {
 
     private final Timestamp generationStartTime;
     private final Date generationStartDate;
+    private final Timestamp generationEndTime;
+    private final Date generationEndDate;
+    private final Integer generationDurationInMinutes;
     private final String dataSourceId;
     private final String dataSourceClass;
     private final String generationType;
@@ -39,17 +44,17 @@ public class BatchGenerationLogRecord {
     private final String exceptionClass;
     private final String exceptionMessage;
 
-    public BatchGenerationLogRecord(DataSource<?> dataSource, Exception exception) {
-        this(LocalDateTime.now(), dataSource, exception);
-    }
-
     public BatchGenerationLogRecord(LocalDateTime startTime, DataSource<?> dataSource, Exception exception) {
 
         Generation<?> generation = dataSource.getConfiguration().getGeneration();
         Output<?> output = dataSource.getConfiguration().getOutput();
 
+        LocalDateTime now = now();
         this.generationStartTime = Timestamp.valueOf(startTime);
         this.generationStartDate = Date.valueOf(startTime.toLocalDate());
+        this.generationEndTime = Timestamp.valueOf(now);
+        this.generationEndDate = Date.valueOf(now.toLocalDate());
+        this.generationDurationInMinutes = (int) (ChronoUnit.MINUTES.between(startTime, now));
         this.dataSourceId = dataSource.getId();
         this.dataSourceClass = generation.getDataClass().getName();
         this.generationType = generation.getType();

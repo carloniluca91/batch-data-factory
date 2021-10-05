@@ -1,6 +1,9 @@
 INSERT INTO @jdbc.log.table@ (
 generation_start_time,
 generation_start_date,
+generation_end_time,
+generation_end_date,
+generation_duration_in_minutes,
 datasource_id,
 datasource_class,
 generation_type,
@@ -17,6 +20,9 @@ exception_message
 ) VALUES (
 :r.getGenerationStartTime,
 :r.getGenerationStartDate,
+:r.getGenerationEndTime,
+:r.getGenerationEndDate,
+:r.getGenerationDurationInMinutes,
 :r.getDataSourceId,
 :r.getDataSourceClass,
 :r.getGenerationType,
