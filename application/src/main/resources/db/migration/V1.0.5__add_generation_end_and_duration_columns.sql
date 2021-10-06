@@ -26,11 +26,11 @@ CREATE TABLE IF NOT EXISTS @jdbc.log.table@_tmp (
 );
 
 COMMENT ON COLUMN @jdbc.log.table@_tmp.sample_id IS 'Id of generated sample';
-COMMENT ON COLUMN @jdbc.log.table@_tmp.generation_start_time IS 'Timestamp of generated sample';
-COMMENT ON COLUMN @jdbc.log.table@_tmp.generation_start_date IS 'Date of generated sample';
-COMMENT ON COLUMN @jdbc.log.table@_tmp.generation_end_time IS 'Timestamp of generated sample';
-COMMENT ON COLUMN @jdbc.log.table@_tmp.generation_end_date IS 'Date of generated sample';
-COMMENT ON COLUMN @jdbc.log.table@_tmp.generation_duration_in_minutes IS 'Duration of generation process in minutes (-1 where datum was not available)';
+COMMENT ON COLUMN @jdbc.log.table@_tmp.generation_start_time IS 'Start time of generation process';
+COMMENT ON COLUMN @jdbc.log.table@_tmp.generation_start_date IS 'Start date of generation process';
+COMMENT ON COLUMN @jdbc.log.table@_tmp.generation_end_time IS 'End time of generation process';
+COMMENT ON COLUMN @jdbc.log.table@_tmp.generation_end_date IS 'End date of generation process';
+COMMENT ON COLUMN @jdbc.log.table@_tmp.generation_duration_in_minutes IS 'Duration of generation process in minutes (-1 where this computation was not available)';
 COMMENT ON COLUMN @jdbc.log.table@_tmp.datasource_id IS 'Human readable datasource id';
 COMMENT ON COLUMN @jdbc.log.table@_tmp.datasource_class IS 'FQ name of generated sample class';
 COMMENT ON COLUMN @jdbc.log.table@_tmp.generation_type IS 'CUSTOM|STANDARD';
