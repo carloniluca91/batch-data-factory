@@ -10,6 +10,6 @@ public abstract class StandardGenerationTest<T> extends GenerationTest<T> {
 
     @Override
     protected T getInstance() throws Exception {
-        return BeanGenerator.generate(tClass);
+        return BeanGenerator.generateSingleTon(tClass);
     }
 }

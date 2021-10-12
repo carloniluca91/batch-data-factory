@@ -5,7 +5,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import it.luca.data.factory.generator.bean.CustomGenerator;
 import lombok.Getter;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static it.luca.utils.functional.Optional.isPresent;
@@ -42,12 +41,7 @@ public class CustomGeneration<T> extends Generation<T> {
                     this.getClass().getSimpleName(), CustomGenerator.class.getSimpleName(), dataClass.getSimpleName()));
         }
 
-        List<T> batch = new ArrayList<>();
-        CustomGenerator<T> generator = generatorClass.newInstance();
-        for (int i=0; i < getBatchSize(); i++) {
-            batch.add(generator.generate(dataClass));
-        }
-
-        return batch;
+        return generatorClass.newInstance()
+                .generateListOf(getBatchSize(), dataClass);
     }
 }

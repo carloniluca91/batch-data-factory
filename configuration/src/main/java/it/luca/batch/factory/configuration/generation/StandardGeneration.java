@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import it.luca.data.factory.generator.bean.BeanGenerator;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -25,11 +24,6 @@ public class StandardGeneration<T> extends Generation<T> {
     @Override
     protected List<T> createBatch() throws Exception {
 
-        List<T> batch = new ArrayList<>();
-        for (int i=0; i < getBatchSize(); i++) {
-            batch.add(BeanGenerator.generate(dataClass));
-        }
-
-        return batch;
+        return BeanGenerator.generateListOf(getBatchSize(), dataClass);
     }
 }

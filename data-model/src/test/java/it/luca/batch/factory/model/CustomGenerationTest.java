@@ -16,7 +16,7 @@ public abstract class CustomGenerationTest<T, G extends CustomGenerator<T>> exte
     @Override
     protected T getInstance() throws Exception {
 
-        G generator = generatorClass.newInstance();
-        return generator.generate(tClass);
+        return generatorClass.newInstance()
+                .generateSingleTon(tClass);
     }
 }

@@ -4,7 +4,6 @@ import it.luca.batch.factory.app.jdbc.dao.ApplicationDao;
 import it.luca.batch.factory.app.service.write.FileSystemWriter;
 import it.luca.batch.factory.configuration.DataSource;
 import it.luca.batch.factory.configuration.DataSourceConfiguration;
-import it.luca.batch.factory.configuration.generation.Generation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -39,8 +38,7 @@ public class ApplicationService {
         try {
 
             DataSourceConfiguration<T> configuration = dataSource.getConfiguration();
-            Generation<T> generation = configuration.getGeneration();
-            List<T> batch = generation.getBatch();
+            List<T> batch = configuration.getGeneration().getBatch();
             fileSystemWriter.writeData(batch, configuration);
             log.info("Successfully generated data for dataSource {}", dataSourceId);
 
