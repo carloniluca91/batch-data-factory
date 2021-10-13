@@ -2,6 +2,8 @@ package it.luca.batch.factory.model;
 
 import it.luca.data.factory.generator.bean.CustomGenerator;
 
+import java.util.List;
+
 public abstract class CustomGenerationTest<T, G extends CustomGenerator<T>> extends GenerationTest<T> {
 
     protected final Class<G> generatorClass;
@@ -14,9 +16,9 @@ public abstract class CustomGenerationTest<T, G extends CustomGenerator<T>> exte
     }
 
     @Override
-    protected T getInstance() throws Exception {
+    protected List<T> getInstances() throws Exception {
 
         return generatorClass.newInstance()
-                .generateSingleTon(tClass);
+                .generateListOf(SIZE, tClass);
     }
 }

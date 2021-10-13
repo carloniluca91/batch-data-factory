@@ -26,8 +26,6 @@ public class CsvSerialization<T> extends Serialization<T> {
         private final char separator;
     }
 
-    public static final String COMPRESS = "compress";
-    public static final String COMPRESSION_EXTENSION = ".gz";
     public static final String OPTIONS = "options";
     public static final String SEPARATOR = "separator";
     public static final String HEADER = "header";
@@ -42,7 +40,7 @@ public class CsvSerialization<T> extends Serialization<T> {
                             @JsonProperty(COMPRESS) Boolean compress,
                             @JsonProperty(OPTIONS) Map<String, String> options) {
 
-        super(type, fileName, datePattern);
+        super(type, fileName, datePattern, compress);
         this.compress = orElse(compress, Function.identity(), true);
         this.options = requireNonNull(options, OPTIONS);
     }
@@ -101,12 +99,5 @@ public class CsvSerialization<T> extends Serialization<T> {
     public boolean quoteStrings() {
 
         return getOrElse(QUOTE_STRINGS, Boolean::parseBoolean, false);
-    }
-
-    @Override
-    public String getFileNameWithDateAndExtension() {
-
-        String fileName = super.getFileNameWithDateAndExtension();
-        return compress ? fileName.concat(COMPRESSION_EXTENSION) : fileName;
     }
 }

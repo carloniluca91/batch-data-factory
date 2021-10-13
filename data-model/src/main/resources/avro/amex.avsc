@@ -1,0 +1,21 @@
+{
+  "namespace": "it.luca.batch.factory.model.amex",
+  "name": "AmexAvroRecord",
+  "type": "record",
+  "fields": [
+    {"name": "tipo_record", "type": ["string", "null"]},
+    {"name": "progressivo_record", "type": ["int", "null"]},
+    {"name": "ndg_banca", "type": ["string", "null"]},
+    {"name": "data_inserimento_richiesta_carta", "type": ["string", "null"]},
+    {"name": "data_approvazione_richiesta_carta", "type": ["string", "null"]},
+    {"name": "descrizione_prodotto", "type": ["string", "null"]},
+    {"name": "tipo_carta", "type": ["string", "null"]},
+    {"name": "product_type_code", "type": ["string", "null"]},
+    {"name": "totale_speso_mensile_carta_segno", "type": ["string", "null"]},
+    {"name": "totale_speso_mensile_carta_anno_segno", "type": ["string", "null"]},
+    {"name": "quota_annua_primo_anno_mese_segno", "type": ["string", "null"]},
+    {"name": "quota_annua_primo_anno_anno_segno", "type": ["string", "null"]},
+    {"name": "lending_indicator", "type": ["string", "null"]},
+    {"name": "revolve_indicator", "type": ["string", "null"]}
+  ]
+}

@@ -15,7 +15,6 @@ class OcsRecordTest extends CustomGenerationTest<OcsRecord, OcsRecordGenerator> 
     protected void testAssertions(OcsRecord instance) {
 
         if (isPresent(instance.getDataOperazione())) {
-            assertTrue(isPresent(instance.getDataContabilizzazione()));
             assertTrue(instance.getDataContabilizzazione().isAfter(instance.getDataOperazione()));
         } else {
             assertNull(instance.getDataContabilizzazione());

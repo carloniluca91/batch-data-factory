@@ -24,7 +24,7 @@ public class AvroSerialization<T, R extends SpecificRecord> extends Serializatio
                              @JsonProperty(AVRO_RECORD_CLASS) String avroRecordClass,
                              @JsonProperty(AVRO_RECORD_MAPPER_CLASS) String avroRecordMapperClass) throws ClassNotFoundException {
 
-        super(type, fileName, datePattern);
+        super(type, fileName, datePattern, false);
         this.avroRecordClass = (Class<R>) Class.forName(requireNonNull(avroRecordClass, AVRO_RECORD_CLASS));
         this.avroRecordMapperClass = (Class<? extends AvroRecordMapper<T,R>>) Class.forName(
                 requireNonNull(avroRecordMapperClass, AVRO_RECORD_MAPPER_CLASS));

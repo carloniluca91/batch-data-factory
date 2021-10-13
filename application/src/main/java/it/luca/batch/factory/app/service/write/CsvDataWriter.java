@@ -8,7 +8,6 @@ import it.luca.batch.factory.configuration.output.CsvSerialization;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
-import java.util.zip.GZIPOutputStream;
 
 /**
  * Extension of {@link DataWriter} for writing data in .csv format
@@ -35,13 +34,8 @@ public class CsvDataWriter<T> extends DataWriter<T, CsvSerialization<T>> {
                 schemaWithSeparatorAndHeader :
                 schemaWithSeparatorAndHeader.withoutQuoteChar();
 
-        // Create compressed stream if necessary
-        OutputStream stream = serialization.getCompress() ?
-                new GZIPOutputStream(outputStream) :
-                outputStream;
-
         ObjectWriter writer = csvMapper.writer(schema);
-        writer.writeValue(stream, batch);
+        writer.writeValue(outputStream, batch);
         outputStream.close();
     }
 }

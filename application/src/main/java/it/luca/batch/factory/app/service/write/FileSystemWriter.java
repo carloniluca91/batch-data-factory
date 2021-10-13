@@ -19,10 +19,12 @@ import org.apache.hadoop.security.UserGroupInformation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.io.OutputStream;
 import java.security.PrivilegedAction;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.function.Function;
+import java.util.zip.GZIPOutputStream;
 
 import static it.luca.utils.functional.Optional.orElse;
 
@@ -133,12 +135,15 @@ public class FileSystemWriter {
                     .concat(Serialization.class.getSimpleName()));
         }
 
-        // Open output stream and write data
-        FSDataOutputStream fsDataOutputStream = fs.create(targetFilePath, orElse(target.getOverwrite(), Function.identity(), false));
+        // Open output stream (maybe compressed) and write data
+        FSDataOutputStream originalStream = fs.create(targetFilePath, orElse(target.getOverwrite(), Function.identity(), false));
+        OutputStream originalStreamMaybeCompressed = serialization.getCompress() ?
+                    new GZIPOutputStream(originalStream) :
+                    originalStream;
         String serializationFormat = serialization.getFormat().name().toLowerCase();
         log.info("Starting to write all of {} instance(s) of {} as .{} file on {} at path {}",
                 batch.size(), dataClass.getSimpleName(), serializationFormat, fsDescription, targetFilePath);
-        dataWriter.write(batch, fsDataOutputStream);
+        dataWriter.write(batch, originalStreamMaybeCompressed);
         log.info("Successfully written all of {} instance(s) of {} as .{} file on {} at path {}",
                 batch.size(), dataClass.getSimpleName(), serializationFormat, fsDescription, targetFilePath);
     }
