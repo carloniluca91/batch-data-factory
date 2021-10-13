@@ -1,15 +1,17 @@
-package it.luca.batch.factory.configuration.output;
+package it.luca.batch.factory.configuration.output.serialization;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JavaType;
 import it.luca.batch.factory.configuration.JsonSubTypeParsingTest;
+import it.luca.batch.factory.configuration.output.TestAvroRecord;
+import it.luca.batch.factory.configuration.output.TestAvroRecordMapper;
+import it.luca.batch.factory.configuration.output.TestBean;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 class SerializationTest extends JsonSubTypeParsingTest {
 
@@ -56,7 +58,6 @@ class SerializationTest extends JsonSubTypeParsingTest {
 
         Map<String, Object> map = getCommonObjectMap();
         map.put(Serialization.FORMAT, Serialization.CSV);
-        map.put(CsvSerialization.COMPRESS, true);
         map.put(CsvSerialization.OPTIONS, optionsMap);
 
         Serialization<TestBean> serialization = mapper.readValue(mapToJsonString(map), type);
@@ -65,7 +66,7 @@ class SerializationTest extends JsonSubTypeParsingTest {
         assertTrue(serialization instanceof CsvSerialization);
 
         CsvSerialization<TestBean> csvSerialization = (CsvSerialization<TestBean>) serialization;
-        assertTrue(csvSerialization.getCompress());
+        assertNull(csvSerialization.getCompression());
         assertEquals(csvSerialization.getSeparator(), CsvSerialization.CSVSeparator.PIPE.getSeparator());
     }
 }

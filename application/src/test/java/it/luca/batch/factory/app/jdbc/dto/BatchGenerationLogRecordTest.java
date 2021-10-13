@@ -3,9 +3,9 @@ package it.luca.batch.factory.app.jdbc.dto;
 import it.luca.batch.factory.configuration.DataSource;
 import it.luca.batch.factory.configuration.DataSourceConfiguration;
 import it.luca.batch.factory.configuration.generation.*;
-import it.luca.batch.factory.configuration.output.CsvSerialization;
+import it.luca.batch.factory.configuration.output.serialization.CsvSerialization;
 import it.luca.batch.factory.configuration.output.Output;
-import it.luca.batch.factory.configuration.output.Serialization;
+import it.luca.batch.factory.configuration.output.serialization.Serialization;
 import it.luca.batch.factory.configuration.output.Target;
 import org.junit.jupiter.api.Test;
 
@@ -35,7 +35,7 @@ class BatchGenerationLogRecordTest {
     private final SizeType SIZE_TYPE = new FixedSize(SizeType.FIXED, SIZE);
 
     private final CsvSerialization<TestBean> SERIALIZATION = new CsvSerialization<>(SERIALIZATION_FORMAT,
-            FILE_NAME, DATE_PATTERN, false, new HashMap<>());
+            FILE_NAME, DATE_PATTERN, null, new HashMap<>());
 
     private final Target TARGET = new Target(FILE_SYSTEM_TYPE, false, OUTPUT_PATH);
     private final Output<TestBean> OUTPUT = new Output<>(TARGET, SERIALIZATION);
@@ -62,7 +62,7 @@ class BatchGenerationLogRecordTest {
         assertEquals(SERIALIZATION_FORMAT, record.getSerializationFormat());
         assertEquals(FILE_SYSTEM_TYPE, record.getFileSystemType());
         assertEquals(OUTPUT_PATH, record.getFileSystemPath());
-        assertEquals(SERIALIZATION.getFileNameWithDateAndExtension(), record.getGeneratedFileName());
+        assertEquals(SERIALIZATION.getFileNameWithDateAndExtensions(), record.getGeneratedFileName());
         assertEquals(BatchGenerationLogRecord.OK, record.getSampleGenerationCode());
         assertNull(record.getExceptionClass());
         assertNull(record.getExceptionMessage());

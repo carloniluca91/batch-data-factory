@@ -2,6 +2,7 @@ package it.luca.batch.factory.configuration.output;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import it.luca.batch.factory.configuration.output.serialization.Serialization;
 import lombok.Getter;
 
 import static java.util.Objects.requireNonNull;

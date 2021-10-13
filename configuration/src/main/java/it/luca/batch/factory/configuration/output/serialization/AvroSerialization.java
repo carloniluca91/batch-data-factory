@@ -1,7 +1,8 @@
-package it.luca.batch.factory.configuration.output;
+package it.luca.batch.factory.configuration.output.serialization;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import it.luca.batch.factory.configuration.output.AvroRecordMapper;
 import lombok.Getter;
 import org.apache.avro.specific.SpecificRecord;
 
@@ -24,7 +25,7 @@ public class AvroSerialization<T, R extends SpecificRecord> extends Serializatio
                              @JsonProperty(AVRO_RECORD_CLASS) String avroRecordClass,
                              @JsonProperty(AVRO_RECORD_MAPPER_CLASS) String avroRecordMapperClass) throws ClassNotFoundException {
 
-        super(type, fileName, datePattern, false);
+        super(type, fileName, datePattern);
         this.avroRecordClass = (Class<R>) Class.forName(requireNonNull(avroRecordClass, AVRO_RECORD_CLASS));
         this.avroRecordMapperClass = (Class<? extends AvroRecordMapper<T,R>>) Class.forName(
                 requireNonNull(avroRecordMapperClass, AVRO_RECORD_MAPPER_CLASS));

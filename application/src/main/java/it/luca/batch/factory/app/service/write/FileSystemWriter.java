@@ -6,6 +6,9 @@ import it.luca.batch.factory.app.service.dto.FsOperation;
 import it.luca.batch.factory.app.service.dto.SucceededFsOperation;
 import it.luca.batch.factory.configuration.DataSourceConfiguration;
 import it.luca.batch.factory.configuration.output.*;
+import it.luca.batch.factory.configuration.output.serialization.AvroSerialization;
+import it.luca.batch.factory.configuration.output.serialization.CsvSerialization;
+import it.luca.batch.factory.configuration.output.serialization.Serialization;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.avro.specific.SpecificRecord;
 import org.apache.hadoop.conf.Configuration;
@@ -19,12 +22,10 @@ import org.apache.hadoop.security.UserGroupInformation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.io.OutputStream;
 import java.security.PrivilegedAction;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.function.Function;
-import java.util.zip.GZIPOutputStream;
 
 import static it.luca.utils.functional.Optional.orElse;
 
@@ -121,7 +122,7 @@ public class FileSystemWriter {
         }
 
         // Define target file path and setup data writer depending on stated serialization format
-        Path targetFilePath = new Path(String.join("/", targetPathStr, serialization.getFileNameWithDateAndExtension()));
+        Path targetFilePath = new Path(String.join("/", targetPathStr, serialization.getFileNameWithDateAndExtensions()));
         Class<T> dataClass = configuration.getGeneration().getDataClass();
         DataWriter<T, ? extends Serialization<T>> dataWriter;
         if (serialization instanceof AvroSerialization) {
@@ -135,15 +136,12 @@ public class FileSystemWriter {
                     .concat(Serialization.class.getSimpleName()));
         }
 
-        // Open output stream (maybe compressed) and write data
-        FSDataOutputStream originalStream = fs.create(targetFilePath, orElse(target.getOverwrite(), Function.identity(), false));
-        OutputStream originalStreamMaybeCompressed = serialization.getCompress() ?
-                    new GZIPOutputStream(originalStream) :
-                    originalStream;
+        // Open output stream and write data
+        FSDataOutputStream outputStream = fs.create(targetFilePath, orElse(target.getOverwrite(), Function.identity(), false));
         String serializationFormat = serialization.getFormat().name().toLowerCase();
         log.info("Starting to write all of {} instance(s) of {} as .{} file on {} at path {}",
                 batch.size(), dataClass.getSimpleName(), serializationFormat, fsDescription, targetFilePath);
-        dataWriter.write(batch, originalStreamMaybeCompressed);
+        dataWriter.write(batch, outputStream);
         log.info("Successfully written all of {} instance(s) of {} as .{} file on {} at path {}",
                 batch.size(), dataClass.getSimpleName(), serializationFormat, fsDescription, targetFilePath);
     }

@@ -1,4 +1,4 @@
-package it.luca.batch.factory.configuration.output;
+package it.luca.batch.factory.configuration.output.serialization;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
@@ -6,9 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import java.time.format.DateTimeFormatter;
-import java.util.function.Function;
 
-import static it.luca.utils.functional.Optional.orElse;
 import static it.luca.utils.time.Supplier.now;
 import static java.util.Objects.requireNonNull;
 
@@ -37,9 +35,7 @@ public abstract class Serialization<T> {
     public static final String AVRO = "AVRO";
     public static final String CSV = "CSV";
     public static final String TXT = "TXT";
-    public static final String COMPRESSION_EXTENSION = ".gz";
 
-    public static final String COMPRESS = "compress";
     public final static String FORMAT = "format";
     public final static String FILE_NAME = "fileName";
     public final static String DATE_PATTERN = "datePattern";
@@ -47,14 +43,12 @@ public abstract class Serialization<T> {
     protected final SerializationFormat format;
     protected final String fileName;
     protected final String datePattern;
-    protected final Boolean compress;
 
-    public Serialization(String format, String fileName, String datePattern, Boolean compress) {
+    public Serialization(String format, String fileName, String datePattern) {
 
         this.format = SerializationFormat.valueOf(requireNonNull(format, FORMAT).toUpperCase());
         this.fileName = requireNonNull(fileName, FILE_NAME);
         this.datePattern = requireNonNull(datePattern, DATE_PATTERN);
-        this.compress = orElse(compress, Function.identity(), true);
     }
 
     /**
@@ -62,14 +56,10 @@ public abstract class Serialization<T> {
      * @return name for output file
      */
 
-    public String getFileNameWithDateAndExtension() {
+    public String getFileNameWithDateAndExtensions() {
 
-        String fileNameWithExtension = fileName
+        return fileName
                 .replace(datePattern, now().format(DateTimeFormatter.ofPattern(datePattern)))
                 .concat(format.getExtension());
-
-        return compress ?
-                fileNameWithExtension.concat(COMPRESSION_EXTENSION) :
-                fileNameWithExtension;
     }
 }

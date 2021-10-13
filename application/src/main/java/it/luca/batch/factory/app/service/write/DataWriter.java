@@ -1,6 +1,6 @@
 package it.luca.batch.factory.app.service.write;
 
-import it.luca.batch.factory.configuration.output.Serialization;
+import it.luca.batch.factory.configuration.output.serialization.Serialization;
 import lombok.AllArgsConstructor;
 
 import java.io.OutputStream;

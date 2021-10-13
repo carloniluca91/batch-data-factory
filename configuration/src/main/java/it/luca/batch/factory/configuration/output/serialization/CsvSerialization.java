@@ -1,14 +1,17 @@
-package it.luca.batch.factory.configuration.output;
+package it.luca.batch.factory.configuration.output.serialization;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import it.luca.batch.factory.configuration.output.compression.Compression;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.compress.compressors.CompressorException;
 
+import java.io.OutputStream;
 import java.util.Map;
 import java.util.function.Function;
 
-import static it.luca.utils.functional.Optional.orElse;
+import static it.luca.utils.functional.Optional.isPresent;
 import static java.util.Objects.requireNonNull;
 
 @Slf4j
@@ -26,22 +29,23 @@ public class CsvSerialization<T> extends Serialization<T> {
         private final char separator;
     }
 
+    public static final String COMPRESSION = "compression";
     public static final String OPTIONS = "options";
     public static final String SEPARATOR = "separator";
     public static final String HEADER = "header";
     public static final String QUOTE_STRINGS = "quoteStrings";
 
-    private final Boolean compress;
+    private final Compression compression;
     private final Map<String, String> options;
 
     public CsvSerialization(@JsonProperty(FORMAT) String type,
                             @JsonProperty(FILE_NAME) String fileName,
                             @JsonProperty(DATE_PATTERN) String datePattern,
-                            @JsonProperty(COMPRESS) Boolean compress,
+                            @JsonProperty(COMPRESSION) Compression compression,
                             @JsonProperty(OPTIONS) Map<String, String> options) {
 
-        super(type, fileName, datePattern, compress);
-        this.compress = orElse(compress, Function.identity(), true);
+        super(type, fileName, datePattern);
+        this.compression = compression;
         this.options = requireNonNull(options, OPTIONS);
     }
 
@@ -99,5 +103,21 @@ public class CsvSerialization<T> extends Serialization<T> {
     public boolean quoteStrings() {
 
         return getOrElse(QUOTE_STRINGS, Boolean::parseBoolean, false);
+    }
+
+    @Override
+    public String getFileNameWithDateAndExtensions() {
+
+        String fileNameWithDate = super.getFileNameWithDateAndExtensions();
+        return isPresent(compression) ?
+                compression.getCompressedFileName(fileNameWithDate) :
+                fileNameWithDate;
+    }
+
+    public OutputStream getMaybeCompressedOutputStream(OutputStream outputStream) throws CompressorException {
+
+        return isPresent(compression) ?
+                compression.getCompressedStream(outputStream) :
+                outputStream;
     }
 }

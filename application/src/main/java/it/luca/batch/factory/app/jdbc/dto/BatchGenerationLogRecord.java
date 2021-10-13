@@ -67,7 +67,7 @@ public class BatchGenerationLogRecord {
         this.serializationFormat = output.getSerialization().getFormat().name();
         this.fileSystemType = output.getTarget().getFileSystemType().name();
         this.fileSystemPath = output.getTarget().getPath();
-        this.generatedFileName = output.getSerialization().getFileNameWithDateAndExtension();
+        this.generatedFileName = output.getSerialization().getFileNameWithDateAndExtensions();
         this.sampleGenerationCode = isPresent(exception) ? KO : OK;
         this.exceptionClass = orNull(exception, x -> x.getClass().getName());
         this.exceptionMessage = orNull(exception, Exception::getMessage);

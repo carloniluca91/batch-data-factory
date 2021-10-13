@@ -1,8 +1,7 @@
 package it.luca.batch.factory.app.service.write;
 
 import it.luca.batch.factory.configuration.output.AvroRecordMapper;
-import it.luca.batch.factory.configuration.output.AvroSerialization;
-import org.apache.avro.file.CodecFactory;
+import it.luca.batch.factory.configuration.output.serialization.AvroSerialization;
 import org.apache.avro.file.DataFileWriter;
 import org.apache.avro.io.DatumWriter;
 import org.apache.avro.specific.SpecificDatumWriter;

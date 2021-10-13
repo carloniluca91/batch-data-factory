@@ -3,7 +3,8 @@ package it.luca.batch.factory.app.service.write;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
-import it.luca.batch.factory.configuration.output.CsvSerialization;
+import it.luca.batch.factory.configuration.output.serialization.CsvSerialization;
+import org.apache.commons.compress.compressors.CompressorException;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -21,7 +22,7 @@ public class CsvDataWriter<T> extends DataWriter<T, CsvSerialization<T>> {
     }
 
     @Override
-    public void write(List<T> batch, OutputStream outputStream) throws IOException {
+    public void write(List<T> batch, OutputStream outputStream) throws IOException, CompressorException {
         
         CsvMapper csvMapper = new CsvMapper();
         //noinspection unchecked
@@ -35,7 +36,8 @@ public class CsvDataWriter<T> extends DataWriter<T, CsvSerialization<T>> {
                 schemaWithSeparatorAndHeader.withoutQuoteChar();
 
         ObjectWriter writer = csvMapper.writer(schema);
-        writer.writeValue(outputStream, batch);
-        outputStream.close();
+        OutputStream maybeCompressedStream = serialization.getMaybeCompressedOutputStream(outputStream);
+        writer.writeValue(maybeCompressedStream, batch);
+        maybeCompressedStream.close();
     }
 }
